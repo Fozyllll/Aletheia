@@ -222,7 +222,7 @@ const App: React.FC = () => {
     localStorage.setItem('app_settings', JSON.stringify(settings));
   }, [settings]);
 
-  const prefetchQuotes = async (lang: Language) => {
+  const prefetchQuotes = useCallback(async (lang: Language) => {
     if (isGeneratingMore) return;
     setIsGeneratingMore(true);
     try {
@@ -231,6 +231,18 @@ const App: React.FC = () => {
       const updatedPool = [...currentPool, ...more].slice(0, 25);
       saveCachedPool(updatedPool);
       
+      // If we were low on quotes in the UI, push some immediately
+      setQuotes(prev => {
+        if (prev.length < 10) {
+          const nextBatch = updatedPool.slice(0, 3);
+          nextBatch.forEach(q => seenQuotesRef.current.add(q.text));
+          saveCachedPool(updatedPool.slice(3));
+          fillImagesForQuotes(nextBatch);
+          return [...prev, ...nextBatch];
+        }
+        return prev;
+      });
+
       more.forEach(async (q) => {
         const url = await generateQuoteImage(q.text);
         const pool = getCachedPool();
@@ -243,7 +255,7 @@ const App: React.FC = () => {
     } finally {
       setIsGeneratingMore(false);
     }
-  };
+  }, [isGeneratingMore, fillImagesForQuotes]);
 
   const handleLike = useCallback((id: string) => {
     setQuotes(prev => prev.map(q => q.id === id ? { ...q, isLiked: !q.isLiked } : q));
@@ -271,7 +283,7 @@ const App: React.FC = () => {
     setQuotes(prev => prev.map(q => q.text === text ? { ...q, isLiked: false } : q));
   };
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     const scrollPosition = scrollTop + clientHeight;
     
@@ -289,7 +301,7 @@ const App: React.FC = () => {
         prefetchQuotes(settings.language);
       }
     }
-  };
+  }, [activeTab, settings.language, prefetchQuotes, fillImagesForQuotes]);
 
   if (loading) {
     return (
@@ -323,9 +335,15 @@ const App: React.FC = () => {
                 </div>
              </div>
           )}
-          {isGeneratingMore && quotes.length <= STARTER_QUOTES.length && (
-            <div className="snap-item flex items-center justify-center bg-black">
-              <div className="w-10 h-10 border border-white/5 border-t-white/30 rounded-full animate-spin"></div>
+          {isGeneratingMore && (
+            <div className="snap-item flex flex-col items-center justify-center bg-black">
+              <div className="relative">
+                <div className="w-16 h-16 border-2 border-white/5 rounded-full"></div>
+                <div className="absolute inset-0 w-16 h-16 border-t-2 border-white/40 rounded-full animate-spin"></div>
+              </div>
+              <p className="mt-8 text-white/20 font-ancient text-[11px] tracking-[0.5em] uppercase animate-pulse">
+                {t.curating}
+              </p>
             </div>
           )}
         </div>
