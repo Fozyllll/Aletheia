@@ -148,6 +148,7 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.FEED);
   const [loading, setLoading] = useState(false); // Start immediately with starter quotes
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
+  const [apiAvailable, setApiAvailable] = useState(true);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -167,15 +168,19 @@ const App: React.FC = () => {
   };
 
   const fillImagesForQuotes = useCallback(async (batch: Quote[]) => {
-    batch.forEach(async (q) => {
+    for (const q of batch) {
       if (!q.imageUrl) {
-        const url = await generateQuoteImage(q.text);
-        setQuotes(prev => prev.map(item => item.id === q.id ? { ...item, imageUrl: url } : item));
-        const pool = getCachedPool();
-        const updatedPool = pool.map(item => item.id === q.id ? { ...item, imageUrl: url } : item);
-        saveCachedPool(updatedPool);
+        try {
+          const url = await generateQuoteImage(q.text);
+          setQuotes(prev => prev.map(item => item.id === q.id ? { ...item, imageUrl: url } : item));
+          const pool = getCachedPool();
+          const updatedPool = pool.map(item => item.id === q.id ? { ...item, imageUrl: url } : item);
+          saveCachedPool(updatedPool);
+        } catch (err) {
+          console.error("Image generation failed for", q.id, err);
+        }
       }
-    });
+    }
   }, []);
 
   useEffect(() => {
@@ -223,10 +228,17 @@ const App: React.FC = () => {
   }, [settings]);
 
   const prefetchQuotes = useCallback(async (lang: Language) => {
-    if (isGeneratingMore) return;
+    if (isGeneratingMore || !apiAvailable) return;
     setIsGeneratingMore(true);
     try {
       const more = await generateQuotes(CACHE_SIZE, lang, Array.from(seenQuotesRef.current));
+      
+      if (more.length === 0) {
+        console.log("No quotes generated, marking API as unavailable");
+        setApiAvailable(false);
+        return;
+      }
+
       const currentPool = getCachedPool();
       const updatedPool = [...currentPool, ...more].slice(0, 25);
       saveCachedPool(updatedPool);
@@ -252,10 +264,13 @@ const App: React.FC = () => {
           saveCachedPool(pool);
         }
       });
+    } catch (err) {
+      console.error("Prefetch error", err);
+      setApiAvailable(false);
     } finally {
       setIsGeneratingMore(false);
     }
-  }, [isGeneratingMore, fillImagesForQuotes]);
+  }, [isGeneratingMore, apiAvailable, fillImagesForQuotes]);
 
   const handleLike = useCallback((id: string) => {
     setQuotes(prev => prev.map(q => q.id === id ? { ...q, isLiked: !q.isLiked } : q));
@@ -297,11 +312,11 @@ const App: React.FC = () => {
         fillImagesForQuotes(nextBatch);
       }
       
-      if (pool.length < PREFETCH_THRESHOLD) {
+      if (pool.length < PREFETCH_THRESHOLD && apiAvailable) {
         prefetchQuotes(settings.language);
       }
     }
-  }, [activeTab, settings.language, prefetchQuotes, fillImagesForQuotes]);
+  }, [activeTab, settings.language, prefetchQuotes, fillImagesForQuotes, apiAvailable]);
 
   if (loading) {
     return (
@@ -335,7 +350,7 @@ const App: React.FC = () => {
                 </div>
              </div>
           )}
-          {isGeneratingMore && (
+          {isGeneratingMore && apiAvailable && (
             <div className="snap-item flex flex-col items-center justify-center bg-black">
               <div className="relative">
                 <div className="w-16 h-16 border-2 border-white/5 rounded-full"></div>
@@ -343,6 +358,17 @@ const App: React.FC = () => {
               </div>
               <p className="mt-8 text-white/20 font-ancient text-[11px] tracking-[0.5em] uppercase animate-pulse">
                 {t.curating}
+              </p>
+            </div>
+          )}
+          {!apiAvailable && (
+            <div className="snap-item flex flex-col items-center justify-center bg-black p-12 text-center">
+              <div className="w-12 h-[1px] bg-white/10 mb-8" />
+              <p className="text-white/30 font-ancient text-[10px] tracking-[0.4em] uppercase leading-loose">
+                Vous avez atteint les limites de la sagesse actuelle.
+              </p>
+              <p className="mt-4 text-white/10 text-[8px] uppercase tracking-widest">
+                Revenez plus tard pour de nouvelles vérités.
               </p>
             </div>
           )}

@@ -11,7 +11,6 @@ let quotaExhausted = false;
 export const generateQuotes = async (count: number = 3, lang: Language = 'English', exclude: string[] = []): Promise<Quote[]> => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    console.warn("API Key missing, skipping AI generation");
     return [];
   }
 
