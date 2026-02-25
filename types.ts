@@ -12,13 +12,22 @@ export interface Quote {
 export enum AppTab {
   FEED = 'FEED',
   LIKED = 'LIKED',
-  SETTINGS = 'SETTINGS'
+  SETTINGS = 'SETTINGS',
+  ACCOUNT = 'ACCOUNT'
 }
 
 export type Language = 'English' | 'French' | 'Spanish' | 'German' | 'Italian';
 
 export interface UserProfile {
   avatarEmoji: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+  credits: number;
 }
 
 export interface AppSettings {
@@ -54,7 +63,13 @@ export const TRANSLATIONS: Record<Language, any> = {
     success: 'Ascension',
     life: 'Existence',
     avatar: 'Vessel Identity',
-    copied: 'Captured in mind'
+    copied: 'Captured in mind',
+    login: 'Connect with Google',
+    logout: 'Disconnect',
+    credits: 'Credits',
+    buyCredits: 'Buy Credits (50)',
+    account: 'Account',
+    noCredits: 'No credits remaining'
   },
   French: {
     appName: 'Aletheia',
@@ -81,7 +96,13 @@ export const TRANSLATIONS: Record<Language, any> = {
     success: 'Ascension',
     life: 'Existence',
     avatar: 'Identité du Vaisseau',
-    copied: 'Capturé dans l\'esprit'
+    copied: 'Capturé dans l\'esprit',
+    login: 'Se connecter avec Google',
+    logout: 'Se déconnecter',
+    credits: 'Crédits',
+    buyCredits: 'Acheter des crédits (50)',
+    account: 'Compte',
+    noCredits: 'Plus de crédits'
   },
   // Added Spanish translations to complete the Record type
   Spanish: {
