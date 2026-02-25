@@ -9,8 +9,8 @@ let quotaExhausted = false;
  * Mixes real historical quotes and AI-generated ones.
  */
 export const generateQuotes = async (count: number = 3, lang: Language = 'English', exclude: string[] = []): Promise<Quote[]> => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  const apiKey = typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : undefined;
+  if (!apiKey || apiKey === "undefined") {
     return [];
   }
 
@@ -64,8 +64,8 @@ export const generateQuotes = async (count: number = 3, lang: Language = 'Englis
 export const generateQuoteImage = async (prompt: string): Promise<string> => {
   if (quotaExhausted) return `https://picsum.photos/seed/${Math.random()}/1080/1920`;
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return `https://picsum.photos/seed/${Math.random()}/1080/1920`;
+  const apiKey = typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : undefined;
+  if (!apiKey || apiKey === "undefined") return `https://picsum.photos/seed/${Math.random()}/1080/1920`;
 
   try {
     const ai = new GoogleGenAI({ apiKey });
