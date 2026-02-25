@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: './',
+  base: '/Aletheia/',
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },

@@ -10,6 +10,7 @@ interface QuoteCardProps {
 }
 
 const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language }) => {
+  console.log("Rendering QuoteCard:", quote.id, quote.text.substring(0, 20));
   const [isLiked, setIsLiked] = useState(quote.isLiked);
   const [showHeartAnim, setShowHeartAnim] = useState(false);
   const t = TRANSLATIONS[language] || TRANSLATIONS['English'];
@@ -84,12 +85,12 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language 
 
       {/* Quote Content - Centered */}
       <div className="relative z-10 px-10 pb-48 text-center w-full max-w-2xl pointer-events-none select-none">
-        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white leading-tight italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)] opacity-0 text-reveal" style={{ animationDelay: '0.2s' }}>
+        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white leading-tight italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)] text-reveal" style={{ animationDelay: '0.2s' }}>
           "{quote.text}"
         </h2>
         
         {/* Signature Stack - Positioned below the quote */}
-        <div className="mt-12 flex flex-col items-center gap-5 opacity-0 text-reveal" style={{ animationDelay: '0.6s' }}>
+        <div className="mt-12 flex flex-col items-center gap-5 text-reveal" style={{ animationDelay: '0.6s' }}>
           <div className="w-8 h-[1px] bg-white/30" />
           <h3 className="font-ancient text-sm tracking-[1em] text-white/40 uppercase">
             Aletheia

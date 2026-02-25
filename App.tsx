@@ -179,6 +179,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log("App Initialized with", STARTER_QUOTES.length, "quotes");
     const init = async () => {
       const savedLikes = localStorage.getItem('liked_quotes');
       if (savedLikes) {
@@ -304,13 +305,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="relative h-screen w-screen bg-black overflow-hidden font-sans">
+    <div className="relative h-screen w-screen bg-zinc-900 overflow-hidden font-sans">
       
       {/* Immersive View: No App Name Header */}
 
       {/* Main Feed Layer */}
       <div className={`tab-transition h-full ${activeTab === AppTab.FEED ? 'opacity-100' : 'opacity-0 pointer-events-none scale-95'}`}>
-        <div ref={scrollRef} onScroll={handleScroll} className="snap-container h-screen">
+        <div ref={scrollRef} onScroll={handleScroll} className="snap-container h-screen bg-zinc-900">
           {quotes.length > 0 ? (
             quotes.map((quote) => (
               <QuoteCard key={quote.id} quote={quote} onLike={handleLike} onShare={() => {}} language={settings.language} />
