@@ -20,7 +20,7 @@ export const generateQuotes = async (count: number = 3, lang: Language = 'Englis
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-flash-latest",
+      model: "gemini-3-flash-preview",
       contents: `You are Aletheia, the oracle of truth. Find ${count} inspiring quotes in ${lang}. 
       CRITICAL REQUIREMENT:
       1. Provide at least 80% real historical quotes from famous philosophers, writers, or thinkers (e.g., Marcus Aurelius, Rumi, Seneca, Victor Hugo, Albert Camus, Simone de Beauvoir, Antoine de Saint-Exupéry).
@@ -36,12 +36,14 @@ export const generateQuotes = async (count: number = 3, lang: Language = 'Englis
     });
 
     const text = response.text || "[]";
+    console.log("AI Response received, length:", text.length);
     let rawQuotes = [];
     try {
       const jsonMatch = text.match(/\[.*\]/s);
-      rawQuotes = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+      const jsonStr = jsonMatch ? jsonMatch[0] : text;
+      rawQuotes = JSON.parse(jsonStr);
     } catch (e) {
-      console.error("JSON Parse Error", e);
+      console.error("JSON Parse Error. Raw text:", text);
       return [];
     }
 

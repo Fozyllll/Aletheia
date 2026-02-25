@@ -6,126 +6,106 @@ import QuoteCard from './components/QuoteCard';
 import SettingsPage from './components/SettingsPage';
 
 const STARTER_QUOTES: Quote[] = [
-  {
-    id: 'starter-1',
-    text: "Connais-toi toi-même et tu connaîtras l'univers et les dieux.",
-    author: "Socrate",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-2',
-    text: "La vérité est une terre sans chemin.",
-    author: "Jiddu Krishnamurti",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-3',
-    text: "Le bonheur est parfois caché dans l'inconnu.",
-    author: "Victor Hugo",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-4',
-    text: "L'important n'est pas ce qu'on fait de nous, mais ce que nous faisons nous-mêmes de ce qu'on a fait de nous.",
-    author: "Jean-Paul Sartre",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1493246507139-91e8bef99c02?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-5',
-    text: "Rien n'est permanent, sauf le changement.",
-    author: "Héraclite",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-6',
-    text: "Le voyage de mille lieues commence par un pas.",
-    author: "Lao Tseu",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-7',
-    text: "Fais de ta vie un rêve, et d'un rêve, une réalité.",
-    author: "Antoine de Saint-Exupéry",
-    category: "Life",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-8',
-    text: "La vie, c'est ce qui arrive quand on a d'autres projets.",
-    author: "John Lennon",
-    category: "Life",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-9',
-    text: "L'imagination est plus importante que le savoir.",
-    author: "Albert Einstein",
-    category: "Success",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-10',
-    text: "On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux.",
-    author: "Antoine de Saint-Exupéry",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-11',
-    text: "La seule chose que je sais, c'est que je ne sais rien.",
-    author: "Socrate",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-12',
-    text: "Le bonheur est la seule chose qui se double si on le partage.",
-    author: "Albert Schweitzer",
-    category: "Life",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-13',
-    text: "Soyez le changement que vous voulez voir dans le monde.",
-    author: "Mahatma Gandhi",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-14',
-    text: "La musique est la langue des émotions.",
-    author: "Emmanuel Kant",
-    category: "Wisdom",
-    isAI: false,
-    imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=1080"
-  },
-  {
-    id: 'starter-15',
-    text: "Le silence est le langage de la conscience pure.",
-    author: "Aletheia",
-    category: "Wisdom",
-    isAI: true,
-    imageUrl: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&q=80&w=1080"
-  }
+  { id: 's1', text: "Connais-toi toi-même.", author: "Socrate", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s1/1080/1920" },
+  { id: 's2', text: "La vérité est une terre sans chemin.", author: "Jiddu Krishnamurti", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s2/1080/1920" },
+  { id: 's3', text: "Le bonheur est parfois caché dans l'inconnu.", author: "Victor Hugo", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s3/1080/1920" },
+  { id: 's4', text: "L'important n'est pas ce qu'on fait de nous, mais ce que nous faisons nous-mêmes.", author: "Jean-Paul Sartre", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s4/1080/1920" },
+  { id: 's5', text: "Rien n'est permanent, sauf le changement.", author: "Héraclite", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s5/1080/1920" },
+  { id: 's6', text: "Le voyage de mille lieues commence par un pas.", author: "Lao Tseu", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s6/1080/1920" },
+  { id: 's7', text: "Fais de ta vie un rêve, et d'un rêve, une réalité.", author: "Antoine de Saint-Exupéry", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s7/1080/1920" },
+  { id: 's8', text: "La vie, c'est ce qui arrive quand on a d'autres projets.", author: "John Lennon", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s8/1080/1920" },
+  { id: 's9', text: "L'imagination est plus importante que le savoir.", author: "Albert Einstein", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s9/1080/1920" },
+  { id: 's10', text: "On ne voit bien qu'avec le cœur.", author: "Antoine de Saint-Exupéry", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s10/1080/1920" },
+  { id: 's11', text: "La seule chose que je sais, c'est que je ne sais rien.", author: "Socrate", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s11/1080/1920" },
+  { id: 's12', text: "Le bonheur est la seule chose qui se double si on le partage.", author: "Albert Schweitzer", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s12/1080/1920" },
+  { id: 's13', text: "Soyez le changement que vous voulez voir dans le monde.", author: "Mahatma Gandhi", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s13/1080/1920" },
+  { id: 's14', text: "La musique est la langue des émotions.", author: "Emmanuel Kant", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s14/1080/1920" },
+  { id: 's15', text: "Le silence est le langage de la conscience pure.", author: "Aletheia", category: "Wisdom", isAI: true, imageUrl: "https://picsum.photos/seed/s15/1080/1920" },
+  { id: 's16', text: "Vivre, c'est naître lentement.", author: "Antoine de Saint-Exupéry", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s16/1080/1920" },
+  { id: 's17', text: "L'avenir appartient à ceux qui croient à la beauté de leurs rêves.", author: "Eleanor Roosevelt", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s17/1080/1920" },
+  { id: 's18', text: "Le plus grand risque est de ne prendre aucun risque.", author: "Mark Zuckerberg", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s18/1080/1920" },
+  { id: 's19', text: "La patience est amère, mais son fruit est doux.", author: "Jean-Jacques Rousseau", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s19/1080/1920" },
+  { id: 's20', text: "L'éducation est l'arme la plus puissante pour changer le monde.", author: "Nelson Mandela", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s20/1080/1920" },
+  { id: 's21', text: "La simplicité est la sophistication suprême.", author: "Léonard de Vinci", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s21/1080/1920" },
+  { id: 's22', text: "Aimez-vous les uns les autres.", author: "Jésus", category: "Love", isAI: false, imageUrl: "https://picsum.photos/seed/s22/1080/1920" },
+  { id: 's23', text: "Tout ce que nous sommes est le résultat de nos pensées.", author: "Bouddha", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s23/1080/1920" },
+  { id: 's24', text: "Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme.", author: "Winston Churchill", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s24/1080/1920" },
+  { id: 's25', text: "La vie est un mystère qu'il faut vivre, et non un problème à résoudre.", author: "Gandhi", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s25/1080/1920" },
+  { id: 's26', text: "Le cœur a ses raisons que la raison ne connaît point.", author: "Blaise Pascal", category: "Love", isAI: false, imageUrl: "https://picsum.photos/seed/s26/1080/1920" },
+  { id: 's27', text: "L'homme est condamné à être libre.", author: "Jean-Paul Sartre", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s27/1080/1920" },
+  { id: 's28', text: "La beauté sauvera le monde.", author: "Fiodor Dostoïevski", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s28/1080/1920" },
+  { id: 's29', text: "Agis comme s'il était impossible d'échouer.", author: "Winston Churchill", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s29/1080/1920" },
+  { id: 's30', text: "La vie est courte, l'art est long.", author: "Hippocrate", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s30/1080/1920" },
+  { id: 's31', text: "Le savoir est le seul bien qui s'accroît quand on le partage.", author: "Sacha Guitry", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s31/1080/1920" },
+  { id: 's32', text: "L'amour est la force la plus puissante du monde.", author: "Gandhi", category: "Love", isAI: false, imageUrl: "https://picsum.photos/seed/s32/1080/1920" },
+  { id: 's33', text: "La liberté commence où l'ignorance finit.", author: "Victor Hugo", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s33/1080/1920" },
+  { id: 's34', text: "Le doute est le commencement de la sagesse.", author: "Aristote", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s34/1080/1920" },
+  { id: 's35', text: "La vérité vous rendra libres.", author: "Bible", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s35/1080/1920" },
+  { id: 's36', text: "Penser, c'est dire non.", author: "Alain", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s36/1080/1920" },
+  { id: 's37', text: "L'essentiel est invisible pour les yeux.", author: "Saint-Exupéry", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s37/1080/1920" },
+  { id: 's38', text: "Le temps est un grand maître.", author: "Corneille", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s38/1080/1920" },
+  { id: 's39', text: "La seule limite à notre épanouissement de demain sera nos doutes d'aujourd'hui.", author: "Franklin D. Roosevelt", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s39/1080/1920" },
+  { id: 's40', text: "Le courage n'est pas l'absence de peur, mais la capacité de la vaincre.", author: "Nelson Mandela", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s40/1080/1920" },
+  { id: 's41', text: "La vie est un défi à relever, un bonheur à mériter, une aventure à tenter.", author: "Mère Teresa", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s41/1080/1920" },
+  { id: 's42', text: "L'art de vivre consiste en un mélange subtil entre lâcher prise et tenir bon.", author: "Henri Lewis", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s42/1080/1920" },
+  { id: 's43', text: "Le bonheur n'est pas quelque chose de tout fait. Il découle de vos propres actions.", author: "Dalaï Lama", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s43/1080/1920" },
+  { id: 's44', text: "La persévérance est la clé du succès.", author: "Anonyme", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s44/1080/1920" },
+  { id: 's45', text: "L'échec est le fondement de la réussite.", author: "Lao Tseu", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s45/1080/1920" },
+  { id: 's46', text: "La confiance en soi est le premier secret du succès.", author: "Ralph Waldo Emerson", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s46/1080/1920" },
+  { id: 's47', text: "Le succès n'est pas la clé du bonheur. Le bonheur est la clé du succès.", author: "Albert Schweitzer", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s47/1080/1920" },
+  { id: 's48', text: "La seule façon de faire du bon travail est d'aimer ce que vous faites.", author: "Steve Jobs", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s48/1080/1920" },
+  { id: 's49', text: "Votre temps est limité, ne le gâchez pas en menant une existence qui n'est pas la vôtre.", author: "Steve Jobs", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s49/1080/1920" },
+  { id: 's50', text: "L'innovation distingue un leader d'un suiveur.", author: "Steve Jobs", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s50/1080/1920" },
+  { id: 's51', text: "La créativité, c'est l'intelligence qui s'amuse.", author: "Albert Einstein", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s51/1080/1920" },
+  { id: 's52', text: "Tout le monde est un génie. Mais si vous jugez un poisson sur sa capacité à grimper à un arbre, il passera sa vie entière à croire qu'il est stupide.", author: "Albert Einstein", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s52/1080/1920" },
+  { id: 's53', text: "La mesure de l'intelligence est la capacité de changer.", author: "Albert Einstein", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s53/1080/1920" },
+  { id: 's54', text: "Au milieu de la difficulté se trouve l'opportunité.", author: "Albert Einstein", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s54/1080/1920" },
+  { id: 's55', text: "La logique vous mènera d'un point A à un point B. L'imagination vous mènera partout.", author: "Albert Einstein", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s55/1080/1920" },
+  { id: 's56', text: "Apprendre d'hier, vivre pour aujourd'hui, espérer pour demain.", author: "Albert Einstein", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s56/1080/1920" },
+  { id: 's57', text: "La vie est comme une bicyclette, il faut avancer pour ne pas perdre l'équilibre.", author: "Albert Einstein", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s57/1080/1920" },
+  { id: 's58', text: "Celui qui n'a jamais commis d'erreur n'a jamais rien essayé de nouveau.", author: "Albert Einstein", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s58/1080/1920" },
+  { id: 's59', text: "Ne cherchez pas à devenir un homme de succès, mais plutôt un homme de valeur.", author: "Albert Einstein", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s59/1080/1920" },
+  { id: 's60', text: "La paix ne peut pas être maintenue par la force ; elle ne peut être atteinte que par la compréhension.", author: "Albert Einstein", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s60/1080/1920" },
+  { id: 's61', text: "L'obscurité ne peut pas chasser l'obscurité ; seule la lumière peut le faire.", author: "Martin Luther King Jr.", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s61/1080/1920" },
+  { id: 's62', text: "La haine ne peut pas chasser la haine ; seul l'amour peut le faire.", author: "Martin Luther King Jr.", category: "Love", isAI: false, imageUrl: "https://picsum.photos/seed/s62/1080/1920" },
+  { id: 's63', text: "La liberté n'est jamais donnée volontairement par l'oppresseur ; elle doit être exigée par l'opprimé.", author: "Martin Luther King Jr.", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s63/1080/1920" },
+  { id: 's64', text: "Nos vies commencent à finir le jour où nous devenons silencieux sur les choses qui comptent.", author: "Martin Luther King Jr.", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s64/1080/1920" },
+  { id: 's65', text: "L'injustice où qu'elle soit est une menace pour la justice partout.", author: "Martin Luther King Jr.", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s65/1080/1920" },
+  { id: 's66', text: "La foi, c'est faire le premier pas même quand on ne voit pas tout l'escalier.", author: "Martin Luther King Jr.", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s66/1080/1920" },
+  { id: 's67', text: "À la fin, nous nous souviendrons non pas des mots de nos ennemis, mais du silence de nos amis.", author: "Martin Luther King Jr.", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s67/1080/1920" },
+  { id: 's68', text: "Si vous ne pouvez pas voler, alors courez ; si vous ne pouvez pas courir, alors marchez ; si vous ne pouvez pas marcher, alors rampez ; mais quoi que vous fassiez, vous devez continuer à avancer.", author: "Martin Luther King Jr.", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s68/1080/1920" },
+  { id: 's69', text: "La vraie mesure d'un homme n'est pas sa position dans des moments de confort et de commodité, mais sa position dans des moments de défi et de controverse.", author: "Martin Luther King Jr.", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s69/1080/1920" },
+  { id: 's70', text: "L'intelligence plus le caractère - c'est le but de la véritable éducation.", author: "Martin Luther King Jr.", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s70/1080/1920" },
+  { id: 's71', text: "Soyez vous-même ; tous les autres sont déjà pris.", author: "Oscar Wilde", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s71/1080/1920" },
+  { id: 's72', text: "Vivre est la chose la plus rare du monde. La plupart des gens existent, c'est tout.", author: "Oscar Wilde", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s72/1080/1920" },
+  { id: 's73', text: "L'expérience est le nom que chacun donne à ses erreurs.", author: "Oscar Wilde", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s73/1080/1920" },
+  { id: 's74', text: "On devrait toujours être amoureux. C'est la raison pour laquelle on ne devrait jamais se marier.", author: "Oscar Wilde", category: "Love", isAI: false, imageUrl: "https://picsum.photos/seed/s74/1080/1920" },
+  { id: 's75', text: "Le cynisme, c'est l'art de voir les choses telles qu'elles sont, et non telles qu'elles devraient être.", author: "Oscar Wilde", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s75/1080/1920" },
+  { id: 's76', text: "La seule façon de se débarrasser d'une tentation est d'y céder.", author: "Oscar Wilde", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s76/1080/1920" },
+  { id: 's77', text: "Le succès est un mauvais professeur. Il pousse les gens intelligents à croire qu'ils ne peuvent pas perdre.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s77/1080/1920" },
+  { id: 's78', text: "C'est bien de célébrer le succès, mais il est plus important de tenir compte des leçons de l'échec.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s78/1080/1920" },
+  { id: 's79', text: "Vos clients les plus mécontents sont votre plus grande source d'apprentissage.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s79/1080/1920" },
+  { id: 's80', text: "La vie n'est pas juste, habituez-vous-y.", author: "Bill Gates", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s80/1080/1920" },
+  { id: 's81', text: "Le monde ne se souciera pas de votre estime de soi. Le monde s'attendra à ce que vous accomplissiez quelque chose AVANT que vous ne vous sentiez bien dans votre peau.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s81/1080/1920" },
+  { id: 's82', text: "Si vous pensez que votre professeur est dur, attendez d'avoir un patron.", author: "Bill Gates", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s82/1080/1920" },
+  { id: 's83', text: "Vendre des hamburgers n'est pas au-dessous de votre dignité. Vos grands-parents avaient un mot différent pour la vente de hamburgers : ils appelaient cela une opportunité.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s83/1080/1920" },
+  { id: 's84', text: "Si vous vous plantez, ce n'est pas la faute de vos parents, alors ne gémissez pas sur vos erreurs, apprenez d'elles.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s84/1080/1920" },
+  { id: 's85', text: "Avant votre naissance, vos parents n'étaient pas aussi ennuyeux qu'ils le sont maintenant. Ils sont devenus comme ça en payant vos factures, en nettoyant vos vêtements et en vous écoutant parler de la façon dont vous êtes cool.", author: "Bill Gates", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s85/1080/1920" },
+  { id: 's86', text: "Votre école a peut-être supprimé les gagnants et les perdants, mais la vie ne l'a pas fait.", author: "Bill Gates", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s86/1080/1920" },
+  { id: 's87', text: "La vie n'est pas divisée en semestres. Vous n'avez pas l'été de libre et très peu d'employeurs sont intéressés à vous aider à vous trouver. Trouvez-vous sur votre propre temps.", author: "Bill Gates", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s87/1080/1920" },
+  { id: 's88', text: "La télévision n'est PAS la vraie vie. Dans la vraie vie, les gens doivent quitter le café et aller travailler.", author: "Bill Gates", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s88/1080/1920" },
+  { id: 's89', text: "Soyez gentil avec les geeks. Il y a de fortes chances que vous finissiez par travailler pour l'un d'eux.", author: "Bill Gates", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s89/1080/1920" },
+  { id: 's90', text: "Le secret du succès est de savoir quelque chose que personne d'autre ne sait.", author: "Aristote Onassis", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s90/1080/1920" },
+  { id: 's91', text: "La seule chose qui se dresse entre vous et votre objectif est l'histoire de merde que vous continuez à vous raconter sur la raison pour laquelle vous ne pouvez pas l'atteindre.", author: "Jordan Belfort", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s91/1080/1920" },
+  { id: 's92', text: "Le succès n'est pas définitif, l'échec n'est pas fatal : c'est le courage de continuer qui compte.", author: "Winston Churchill", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s92/1080/1920" },
+  { id: 's93', text: "Le pessimiste voit la difficulté dans chaque opportunité. L'optimiste voit l'opportunité dans chaque difficulté.", author: "Winston Churchill", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s93/1080/1920" },
+  { id: 's94', text: "Si vous traversez l'enfer, continuez.", author: "Winston Churchill", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s94/1080/1920" },
+  { id: 's95', text: "On ne peut pas diriger le vent, mais on peut ajuster les voiles.", author: "Anonyme", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s95/1080/1920" },
+  { id: 's96', text: "La meilleure façon de prédire l'avenir est de le créer.", author: "Peter Drucker", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s96/1080/1920" },
+  { id: 's97', text: "Le seul endroit où le succès vient avant le travail est dans le dictionnaire.", author: "Vidal Sassoon", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s97/1080/1920" },
+  { id: 's98', text: "Ne comptez pas les jours, faites que les jours comptent.", author: "Muhammad Ali", category: "Life", isAI: false, imageUrl: "https://picsum.photos/seed/s98/1080/1920" },
+  { id: 's99', text: "L'impossible n'est qu'un mot dans le dictionnaire des imbéciles.", author: "Napoléon Bonaparte", category: "Success", isAI: false, imageUrl: "https://picsum.photos/seed/s99/1080/1920" },
+  { id: 's100', text: "La vérité est le soleil de l'âme.", author: "Victor Hugo", category: "Wisdom", isAI: false, imageUrl: "https://picsum.photos/seed/s100/1080/1920" }
 ];
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -228,14 +208,22 @@ const App: React.FC = () => {
   }, [settings]);
 
   const prefetchQuotes = useCallback(async (lang: Language) => {
-    if (isGeneratingMore || !apiAvailable) return;
+    if (isGeneratingMore) return;
+    
+    // Check if we even have a key (Vite define might make it a string "undefined" or empty)
+    const hasKey = !!process.env.API_KEY && process.env.API_KEY !== "undefined";
+    if (!hasKey) {
+      setApiAvailable(false);
+      return;
+    }
+
     setIsGeneratingMore(true);
     try {
       const more = await generateQuotes(CACHE_SIZE, lang, Array.from(seenQuotesRef.current));
       
       if (more.length === 0) {
-        console.log("No quotes generated, marking API as unavailable");
-        setApiAvailable(false);
+        console.log("No quotes generated this time");
+        // Don't permanently disable, just stop this attempt
         return;
       }
 
@@ -266,7 +254,7 @@ const App: React.FC = () => {
       });
     } catch (err) {
       console.error("Prefetch error", err);
-      setApiAvailable(false);
+      // We don't setApiAvailable(false) here to allow future retries
     } finally {
       setIsGeneratingMore(false);
     }
