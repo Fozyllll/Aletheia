@@ -207,15 +207,12 @@ async function startServer() {
     });
   }
 
-  // Only skip listen on Vercel environment
-  if (!process.env.VERCEL) {
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
-  }
+  // Ensure the server always listens in this environment
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
 }
 
 startServer();
 
-// Export for Vercel
 export default app;
