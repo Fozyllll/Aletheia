@@ -191,7 +191,7 @@ app.post("/api/credits/deduct", (req, res) => {
   }
 });
 
-// --- VITE MIDDLEWARE ---
+// --- START SERVER ---
 
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
@@ -207,9 +207,15 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  // Only listen if not running as a serverless function (Vercel)
+  if (process.env.VITE_DEV || process.env.NODE_ENV !== "production") {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+// Export for Vercel
+export default app;
