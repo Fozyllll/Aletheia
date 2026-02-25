@@ -19,6 +19,7 @@ if (!fs.existsSync(USERS_FILE)) {
 
 const app = express();
 const PORT = 3000;
+const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
 
 const stripe = (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== "temp") 
   ? new Stripe(process.env.STRIPE_SECRET_KEY) 
@@ -46,7 +47,7 @@ const saveUsers = (users: any) => fs.writeFileSync(USERS_FILE, JSON.stringify(us
 // --- AUTH ROUTES ---
 
 app.get("/api/auth/google/url", (req, res) => {
-  const redirectUri = `${process.env.APP_URL}/auth/google/callback`;
+  const redirectUri = `${APP_URL}/auth/google/callback`;
   const url = googleClient.generateAuthUrl({
     access_type: "offline",
     scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
@@ -57,7 +58,7 @@ app.get("/api/auth/google/url", (req, res) => {
 
 app.get("/auth/google/callback", async (req, res) => {
   const { code } = req.query;
-  const redirectUri = `${process.env.APP_URL}/auth/google/callback`;
+  const redirectUri = `${APP_URL}/auth/google/callback`;
   
   try {
     const { tokens } = await googleClient.getToken({
@@ -144,8 +145,8 @@ app.post("/api/payments/create-checkout", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.APP_URL}/?payment=success`,
-      cancel_url: `${process.env.APP_URL}/?payment=cancel`,
+      success_url: `${APP_URL}/?payment=success`,
+      cancel_url: `${APP_URL}/?payment=cancel`,
       metadata: { userId }
     });
 
@@ -194,20 +195,27 @@ app.post("/api/credits/deduct", (req, res) => {
 // --- START SERVER ---
 
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    app.use(express.static(path.join(__dirname, "dist")));
+  try {
+    if (process.env.NODE_ENV !== "production") {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    } else {
+      app.use(express.static(path.join(__dirname, "dist")));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "dist", "index.html"));
+      });
+    }
+  } catch (err) {
+    console.error("Vite/Middleware setup error:", err);
+    // Fallback if Vite fails
     app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
+      res.status(500).send("Server initialization error. Please check logs.");
     });
   }
 
-  // Ensure the server always listens in this environment
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
