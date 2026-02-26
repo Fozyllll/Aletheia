@@ -272,8 +272,10 @@ const App: React.FC = () => {
   const prefetchQuotes = useCallback(async (lang: Language) => {
     if (isGeneratingMore) return;
     
-    // Safe check for API key that works in both browser (Vite define) and server
-    const hasKey = typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "undefined";
+    // Simplified check for Vite/Browser compatibility
+    const apiKey = process.env.GEMINI_API_KEY;
+    const hasKey = apiKey && apiKey !== "undefined" && apiKey !== "";
+    
     if (!hasKey) {
       setApiAvailable(false);
       return;
