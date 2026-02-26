@@ -381,31 +381,25 @@ const App: React.FC = () => {
       }
 
       const pool = getCachedPool();
+      let initialQuotes: Quote[] = [];
+      
       if (pool.length > 0) {
-        const cachedQuotes = pool.slice(0, 5);
-        setQuotes(cachedQuotes);
-        setHistory(prev => {
-          const newHistory = [...prev, ...cachedQuotes];
-          const map = new Map(newHistory.map(q => [q.text, q]));
-          return Array.from(map.values()).slice(-50);
-        });
-        cachedQuotes.forEach(q => seenQuotesRef.current.add(q.text));
+        initialQuotes = pool.slice(0, 5);
         saveCachedPool(pool.slice(5));
-        fillImagesForQuotes(cachedQuotes);
       } else if (history.length > 0) {
-        // Load some from history if pool is empty
-        setQuotes(history.slice(-10));
+        initialQuotes = history.slice(-10);
       } else {
-        // If no pool and no history, check if we should show starters
-        const savedSeen = localStorage.getItem('seen_quotes');
-        if (!savedSeen) {
-          // First time ever: show starters
-          setQuotes(STARTER_QUOTES);
-          setHistory(STARTER_QUOTES);
-          STARTER_QUOTES.forEach(q => seenQuotesRef.current.add(q.text));
-        }
-        // If savedSeen exists, we don't show starters, we wait for prefetch
+        initialQuotes = STARTER_QUOTES.slice(0, 10);
       }
+      
+      setQuotes(initialQuotes);
+      setHistory(prev => {
+        const newHistory = [...prev, ...initialQuotes];
+        const map = new Map(newHistory.map(q => [q.text, q]));
+        return Array.from(map.values()).slice(-50);
+      });
+      initialQuotes.forEach(q => seenQuotesRef.current.add(q.text));
+      fillImagesForQuotes(initialQuotes);
       
       
       // Prefetch fresh ones in background without blocking the UI
@@ -432,6 +426,11 @@ const App: React.FC = () => {
     const hasKey = apiKey && apiKey !== "undefined" && apiKey !== "";
     
     if (!hasKey) {
+      // On Render or other external deployments, we need to warn the user
+      const isAIStudio = window.location.hostname.includes('run.app') || window.location.hostname.includes('localhost');
+      if (!isAIStudio) {
+        console.error("GEMINI_API_KEY is missing. Please set it in your environment variables.");
+      }
       setApiAvailable(false);
       return;
     }
@@ -693,7 +692,9 @@ const App: React.FC = () => {
               <p className="text-white/30 font-ancient text-[10px] tracking-[0.4em] uppercase leading-loose mb-8">
                 {user && user.credits <= 0 && !user.isPremium 
                   ? "Vous n'avez plus de crédits de sagesse."
-                  : "Vous avez atteint les limites de la sagesse actuelle."}
+                  : !apiAvailable && !(process.env.GEMINI_API_KEY) && !window.location.hostname.includes('run.app')
+                    ? "Configuration requise : Clé API manquante."
+                    : "Vous avez atteint les limites de la sagesse actuelle."}
               </p>
               
               <div className="flex flex-col gap-4 w-full max-w-xs">
