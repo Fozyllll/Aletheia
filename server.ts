@@ -19,6 +19,10 @@ if (!fs.existsSync(USERS_FILE)) {
 
 const app = express();
 const PORT = 3000;
+
+// Trust proxy is required for secure cookies on Render/Vercel
+app.set('trust proxy', 1);
+
 // Priority: Environment Variable > Render URL > Localhost
 const APP_URL = process.env.APP_URL || (process.env.RENDER_EXTERNAL_URL ? process.env.RENDER_EXTERNAL_URL : `http://localhost:${PORT}`);
 
@@ -38,10 +42,10 @@ const googleClient = new OAuth2Client(
 app.use(express.json());
 app.use(cookieSession({
   name: 'session',
-  keys: ['aletheia-secret-key'],
-  maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  secure: true,
-  sameSite: 'none'
+  keys: ['aletheia-secret-key-v1'],
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax'
 }));
 
 // Helper to get/save users
