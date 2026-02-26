@@ -11,21 +11,19 @@ interface QuoteCardProps {
 
 const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language }) => {
   console.log("Rendering QuoteCard:", quote.id, quote.text.substring(0, 20));
-  const [isLiked, setIsLiked] = useState(quote.isLiked);
   const [showHeartAnim, setShowHeartAnim] = useState(false);
   const t = TRANSLATIONS[language] || TRANSLATIONS['English'];
 
   const handleLike = () => {
-    setIsLiked(!isLiked);
     onLike(quote.id);
-    if (!isLiked) {
+    if (!quote.isLiked) {
       setShowHeartAnim(true);
       setTimeout(() => setShowHeartAnim(false), 800);
     }
   };
 
   const handleDoubleTap = () => {
-    if (!isLiked) handleLike();
+    if (!quote.isLiked) handleLike();
     else {
       setShowHeartAnim(true);
       setTimeout(() => setShowHeartAnim(false), 800);
@@ -114,15 +112,15 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language 
           onClick={(e) => { e.stopPropagation(); handleLike(); }}
           className="flex flex-col items-center gap-2 group active:scale-75 transition-transform duration-300"
         >
-          <div className={`p-4 rounded-full glass transition-all duration-500 ${isLiked ? 'bg-red-600 border-transparent shadow-[0_0_50px_rgba(220,38,38,0.5)]' : 'hover:bg-white/10'}`}>
+          <div className={`p-4 rounded-full glass transition-all duration-500 ${quote.isLiked ? 'bg-red-600 border-transparent shadow-[0_0_50px_rgba(220,38,38,0.5)]' : 'hover:bg-white/10'}`}>
             <svg 
-              className={`w-8 h-8 transition-all duration-300 ${isLiked ? 'fill-white scale-110' : 'fill-none stroke-white stroke-[2.5]'}`}
+              className={`w-8 h-8 transition-all duration-300 ${quote.isLiked ? 'fill-white scale-110' : 'fill-none stroke-white stroke-[2.5]'}`}
               viewBox="0 0 24 24"
             >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </div>
-          <span className="text-white/30 text-[9px] font-black uppercase tracking-widest">{isLiked ? t.likedBtn : t.like}</span>
+          <span className="text-white/30 text-[9px] font-black uppercase tracking-widest">{quote.isLiked ? t.likedBtn : t.like}</span>
         </button>
 
         <button 

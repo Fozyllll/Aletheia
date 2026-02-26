@@ -1,14 +1,18 @@
 
 import React from 'react';
-import { AppSettings, Language, TRANSLATIONS, UserProfile } from '../types';
+import { AppSettings, Language, TRANSLATIONS, UserProfile, User } from '../types';
 
 interface SettingsPageProps {
   settings: AppSettings;
   onUpdate: (settings: AppSettings) => void;
   isActive: boolean;
+  user: User | null;
+  onLogin: () => void;
+  onLogout: () => void;
+  onBuyCredits: () => void;
 }
 
-const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActive }) => {
+const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActive, user, onLogin, onLogout, onBuyCredits }) => {
   const languages: Language[] = ['English', 'French', 'Spanish', 'German', 'Italian'];
   const avatars = ['✨', '🕊️', '🌿', '💡', '🎭', '🏔️', '🌊', '🌌'];
   const t = TRANSLATIONS[settings.language];
@@ -108,6 +112,54 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
                   {f.label}
                 </button>
               ))}
+            </div>
+          )}
+        </section>
+
+        <section className="border-t border-white/5 pt-16">
+          <label className="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] block mb-8 text-center">{t.account}</label>
+          
+          {!user ? (
+            <div className="flex flex-col items-center gap-6">
+              <button 
+                onClick={onLogin}
+                className="w-full py-6 bg-white text-black font-ancient text-xs tracking-[0.3em] uppercase rounded-[2.5rem] hover:scale-[1.02] transition-transform"
+              >
+                {t.login}
+              </button>
+              <p className="text-white/10 text-[8px] uppercase tracking-widest text-center px-10 leading-relaxed">
+                Connectez-vous pour sauvegarder vos favoris et générer des images personnalisées.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              <div className="flex items-center gap-6 bg-white/5 p-6 rounded-[2.5rem]">
+                <img src={user.picture} className="w-16 h-16 rounded-full border border-white/10" alt={user.name} />
+                <div>
+                  <p className="text-white font-medium text-sm">{user.name}</p>
+                  <p className="text-white/30 text-[10px]">{user.email}</p>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-[2.5rem] p-8 flex flex-col items-center gap-6">
+                <div className="text-center">
+                  <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-1">{t.credits}</p>
+                  <p className="text-white text-4xl font-serif italic">{user.credits}</p>
+                </div>
+                <button 
+                  onClick={onBuyCredits}
+                  className="w-full py-4 bg-white/10 text-white border border-white/10 font-ancient text-[9px] tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 transition-colors"
+                >
+                  {t.buyCredits}
+                </button>
+              </div>
+
+              <button 
+                onClick={onLogout}
+                className="w-full text-center text-white/20 text-[9px] tracking-[0.4em] uppercase hover:text-white/40 transition-colors"
+              >
+                {t.logout}
+              </button>
             </div>
           )}
         </section>

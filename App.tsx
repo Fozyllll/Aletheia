@@ -474,68 +474,17 @@ const App: React.FC = () => {
       </div>
 
       {/* Settings Page Layer */}
-      <SettingsPage settings={settings} onUpdate={setSettings} isActive={activeTab === AppTab.SETTINGS} />
+      <SettingsPage 
+        settings={settings} 
+        onUpdate={setSettings} 
+        isActive={activeTab === AppTab.SETTINGS} 
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        onBuyCredits={handleBuyCredits}
+      />
 
-      {/* Account Layer */}
-      <div className={`tab-transition absolute inset-0 h-screen overflow-y-auto bg-[#050505] pt-32 pb-48 px-8 scrollbar-hide ${activeTab === AppTab.ACCOUNT ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`}>
-        <div className="max-w-md mx-auto flex flex-col items-center">
-          <h2 className="text-white/70 font-ancient text-3xl tracking-[0.3em] uppercase mb-12">{t.account}</h2>
-          
-          {!user ? (
-            <div className="flex flex-col items-center gap-8 py-12">
-              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                <svg className="w-10 h-10 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <button 
-                onClick={handleLogin}
-                className="px-8 py-4 bg-white text-black font-ancient text-xs tracking-[0.3em] uppercase rounded-full hover:scale-105 transition-transform"
-              >
-                {t.login}
-              </button>
-              
-              {/* Help message if variables are missing */}
-              <div className="mt-12 p-6 bg-white/5 border border-white/10 rounded-2xl text-center max-w-xs">
-                <p className="text-white/40 text-[10px] uppercase tracking-widest leading-relaxed">
-                  Si le bouton ne fonctionne pas, vérifiez vos "Secrets" (icône cadenas) dans AI Studio.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="w-full flex flex-col items-center gap-8">
-              <div className="flex flex-col items-center gap-4">
-                <img src={user.picture} className="w-24 h-24 rounded-full border-2 border-white/10 p-1" alt={user.name} />
-                <div className="text-center">
-                  <p className="text-white text-xl font-medium">{user.name}</p>
-                  <p className="text-white/40 text-xs mt-1">{user.email}</p>
-                </div>
-              </div>
-
-              <div className="w-full bg-white/5 rounded-3xl p-8 flex flex-col items-center gap-6 border border-white/5">
-                <div className="flex flex-col items-center">
-                  <p className="text-white/40 text-[10px] tracking-[0.4em] uppercase mb-2">{t.credits}</p>
-                  <p className="text-white text-5xl font-serif italic">{user.credits}</p>
-                </div>
-                
-                <button 
-                  onClick={handleBuyCredits}
-                  className="w-full py-4 bg-white/10 text-white border border-white/10 font-ancient text-[10px] tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 transition-colors"
-                >
-                  {t.buyCredits}
-                </button>
-              </div>
-
-              <button 
-                onClick={handleLogout}
-                className="mt-8 text-white/30 text-[10px] tracking-[0.4em] uppercase hover:text-white transition-colors"
-              >
-                {t.logout}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Liked Gallery Layer */}
 
       {/* Liquid Navigation Dock */}
       <div className="fixed bottom-12 left-0 right-0 z-[60] flex justify-center px-8 pointer-events-none">
@@ -554,14 +503,6 @@ const App: React.FC = () => {
           >
             <svg className={`w-6 h-6 fill-none stroke-current stroke-[2.5] ${activeTab === AppTab.LIKED ? 'fill-current' : ''}`} viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             {activeTab === AppTab.LIKED && <span className="text-[11px] font-black uppercase tracking-[0.25em]">{t.liked}</span>}
-          </button>
-
-          <button 
-            onClick={() => setActiveTab(AppTab.ACCOUNT)} 
-            className={`relative flex items-center gap-4 px-8 py-4 rounded-full transition-all duration-700 ${activeTab === AppTab.ACCOUNT ? 'bg-white text-black shadow-2xl scale-105' : 'text-white/30 hover:text-white/50'}`}
-          >
-            <svg className="w-6 h-6 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-            {activeTab === AppTab.ACCOUNT && <span className="text-[11px] font-black uppercase tracking-[0.25em]">{t.account}</span>}
           </button>
 
           <button 
