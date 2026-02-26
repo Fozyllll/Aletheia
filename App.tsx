@@ -242,12 +242,50 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const syncLikesWithCloud = useCallback(async (likes: Quote[]) => {
+    try {
+      await fetch("/api/likes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ likes })
+      });
+    } catch (e) {
+      console.error("Failed to sync likes", e);
+    }
+  }, []);
+
   const fetchUser = async () => {
     try {
       const res = await fetch("/api/auth/me");
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+        
+        // Sync likes from cloud
+        const likesRes = await fetch("/api/likes");
+        if (likesRes.ok) {
+          const cloudLikes = await likesRes.json();
+          setLikedQuotes(prev => {
+            // Merge local and cloud likes, avoiding duplicates by text
+            const localMap = new Map(prev.map(q => [q.text, q]));
+            cloudLikes.forEach((q: Quote) => localMap.set(q.text, q));
+            const merged = Array.from(localMap.values());
+            localStorage.setItem('liked_quotes', JSON.stringify(merged));
+            
+            // If local had more, sync back to cloud
+            if (merged.length > cloudLikes.length) {
+              syncLikesWithCloud(merged);
+            }
+            
+            return merged;
+          });
+          
+          // Update current quotes isLiked status
+          setQuotes(prev => prev.map(q => ({
+            ...q,
+            isLiked: cloudLikes.some((l: Quote) => l.text === q.text)
+          })));
+        }
       } else {
         setUser(null);
       }
@@ -418,14 +456,16 @@ const App: React.FC = () => {
         updated = [{ ...q, isLiked: true }, ...prev];
       }
       localStorage.setItem('liked_quotes', JSON.stringify(updated));
+      if (user) syncLikesWithCloud(updated);
       return updated;
     });
-  }, [quotes]);
+  }, [quotes, user, syncLikesWithCloud]);
 
   const handleRemoveLike = (text: string) => {
     setLikedQuotes(prev => {
       const updated = prev.filter(l => l.text !== text);
       localStorage.setItem('liked_quotes', JSON.stringify(updated));
+      if (user) syncLikesWithCloud(updated);
       return updated;
     });
     setQuotes(prev => prev.map(q => q.text === text ? { ...q, isLiked: false } : q));

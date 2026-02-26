@@ -89,7 +89,8 @@ app.get("/auth/google/callback", async (req, res) => {
         email: payload.email,
         name: payload.name,
         picture: payload.picture,
-        credits: 5 // 5 free credits for new users
+        credits: 5, // 5 free credits for new users
+        likedQuotes: []
       };
       saveUsers(users);
     }
@@ -205,6 +206,33 @@ app.post("/api/credits/deduct", (req, res) => {
     res.json({ credits: user.credits });
   } else {
     res.status(403).json({ error: "No credits" });
+  }
+});
+
+// --- LIKES SYNC ---
+
+app.get("/api/likes", (req, res) => {
+  const userId = (req as any).session.userId;
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+  const users = getUsers();
+  res.json(users[userId]?.likedQuotes || []);
+});
+
+app.post("/api/likes", (req, res) => {
+  const userId = (req as any).session.userId;
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+  const { likes } = req.body;
+  if (!Array.isArray(likes)) return res.status(400).json({ error: "Invalid data" });
+
+  const users = getUsers();
+  if (users[userId]) {
+    users[userId].likedQuotes = likes;
+    saveUsers(users);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: "User not found" });
   }
 });
 
