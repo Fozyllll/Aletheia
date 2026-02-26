@@ -146,17 +146,21 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
 
               <div className="bg-white/5 rounded-[2.5rem] p-8 flex flex-col items-center gap-6">
                 <div className="text-center">
-                  <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-1">{t.credits}</p>
+                  <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-1">
+                    {user.isPremium ? 'Statut' : t.credits}
+                  </p>
                   <p className="text-white text-4xl font-serif italic">
-                    {user.credits >= 999999 ? '∞' : user.credits}
+                    {user.isPremium ? 'Premium' : user.credits}
                   </p>
                 </div>
-                <button 
-                  onClick={onBuyCredits}
-                  className="w-full py-4 bg-white/10 text-white border border-white/10 font-ancient text-[9px] tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 transition-colors"
-                >
-                  {t.buyCredits}
-                </button>
+                {!user.isPremium && (
+                  <button 
+                    onClick={onBuyCredits}
+                    className="w-full py-4 bg-white/10 text-white border border-white/10 font-ancient text-[9px] tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 transition-colors"
+                  >
+                    Passer au Premium (2.99€/mois)
+                  </button>
+                )}
               </div>
 
               <button 

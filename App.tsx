@@ -311,7 +311,7 @@ const App: React.FC = () => {
 
   const handleBuyCredits = async () => {
     try {
-      const res = await fetch("/api/payments/create-checkout", { method: "POST" });
+      const res = await fetch("/api/payments/create-subscription", { method: "POST" });
       const { url } = await res.json();
       window.location.href = url;
     } catch (e) {
@@ -443,23 +443,22 @@ const App: React.FC = () => {
     }
   }, [isGeneratingMore, apiAvailable, fillImagesForQuotes]);
 
-  const handleLike = useCallback((id: string) => {
+  const handleLike = useCallback((quoteToLike: Quote) => {
+    const id = quoteToLike.id;
     setQuotes(prev => prev.map(q => q.id === id ? { ...q, isLiked: !q.isLiked } : q));
     setLikedQuotes(prev => {
-      const q = quotes.find(x => x.id === id);
-      if (!q) return prev;
-      const exists = prev.find(l => l.text === q.text);
+      const exists = prev.find(l => l.text === quoteToLike.text);
       let updated;
       if (exists) {
-        updated = prev.filter(l => l.text !== q.text);
+        updated = prev.filter(l => l.text !== quoteToLike.text);
       } else {
-        updated = [{ ...q, isLiked: true }, ...prev];
+        updated = [{ ...quoteToLike, isLiked: true }, ...prev];
       }
       localStorage.setItem('liked_quotes', JSON.stringify(updated));
       if (user) syncLikesWithCloud(updated);
       return updated;
     });
-  }, [quotes, user, syncLikesWithCloud]);
+  }, [user, syncLikesWithCloud]);
 
   const handleRemoveLike = (text: string) => {
     setLikedQuotes(prev => {
@@ -476,7 +475,7 @@ const App: React.FC = () => {
     const scrollPosition = scrollTop + clientHeight;
     
     // Check daily limit for free users
-    const isPro = user && user.credits > 0;
+    const isPro = user && (user.credits > 0 || user.isPremium);
     if (!isPro && dailyCount >= FREE_DAILY_LIMIT) {
       return;
     }
@@ -521,7 +520,7 @@ const App: React.FC = () => {
         <div ref={scrollRef} onScroll={handleScroll} className="snap-container bg-zinc-900" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
           {quotes.length > 0 ? (
             quotes.map((quote) => (
-              <QuoteCard key={quote.id} quote={quote} onLike={handleLike} onShare={() => {}} language={settings.language} />
+              <QuoteCard key={quote.id} quote={quote} onLike={() => handleLike(quote)} onShare={() => {}} language={settings.language} />
             ))
           ) : (
              <div className="h-full w-full flex items-center justify-center bg-black">
@@ -532,7 +531,7 @@ const App: React.FC = () => {
           )}
           
           {/* Daily Limit Message */}
-          {!(user && user.credits > 0) && dailyCount >= FREE_DAILY_LIMIT && (
+          {!(user && (user.credits > 0 || user.isPremium)) && dailyCount >= FREE_DAILY_LIMIT && (
             <div className="snap-item flex flex-col items-center justify-center bg-black p-12 text-center">
               <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-8">
                 <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">

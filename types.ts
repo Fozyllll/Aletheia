@@ -28,6 +28,7 @@ export interface User {
   name: string;
   picture: string;
   credits: number;
+  isPremium?: boolean;
 }
 
 export interface AppSettings {

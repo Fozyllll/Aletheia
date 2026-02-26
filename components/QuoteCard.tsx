@@ -4,29 +4,31 @@ import { Quote, Language, TRANSLATIONS } from '../types';
 
 interface QuoteCardProps {
   quote: Quote;
-  onLike: (id: string) => void;
+  onLike: () => void;
   onShare: (quote: Quote) => void;
   language: Language;
 }
 
 const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language }) => {
   const [showHeartAnim, setShowHeartAnim] = useState(false);
+  const lastTap = React.useRef<number>(0);
   const t = TRANSLATIONS[language] || TRANSLATIONS['English'];
 
   const handleLike = () => {
-    onLike(quote.id);
+    onLike();
     if (!quote.isLiked) {
       setShowHeartAnim(true);
       setTimeout(() => setShowHeartAnim(false), 800);
     }
   };
 
-  const handleDoubleTap = () => {
-    if (!quote.isLiked) handleLike();
-    else {
-      setShowHeartAnim(true);
-      setTimeout(() => setShowHeartAnim(false), 800);
+  const handleTouchStart = () => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+    if (now - lastTap.current < DOUBLE_TAP_DELAY) {
+      handleLike();
     }
+    lastTap.current = now;
   };
 
   const handleShareClick = async (e: React.MouseEvent) => {
@@ -66,7 +68,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language 
   return (
     <div 
       className="snap-item relative bg-black flex flex-col items-center justify-center overflow-hidden"
-      onDoubleClick={handleDoubleTap}
+      onTouchStart={handleTouchStart}
     >
       {/* Background Layer */}
       <div className="absolute inset-0 z-0 overflow-hidden" style={{ background: placeholderGradient }}>

@@ -90,6 +90,7 @@ app.get("/auth/google/callback", async (req, res) => {
         name: payload.name,
         picture: payload.picture,
         credits: 5, // 5 free credits for new users
+        isPremium: false,
         likedQuotes: []
       };
       saveUsers(users);
@@ -125,7 +126,8 @@ app.get("/api/auth/me", (req, res) => {
   const users = getUsers();
   const user = users[userId];
   if (user && user.email === 'fozyllll.yt@gmail.com') {
-    user.credits = 999999; // Special flag for infinite
+    user.isPremium = true;
+    user.credits = 999999;
   }
   res.json(user);
 });
@@ -137,7 +139,7 @@ app.post("/api/auth/logout", (req, res) => {
 
 // --- PAYMENT ROUTES ---
 
-app.post("/api/payments/create-checkout", async (req, res) => {
+app.post("/api/payments/create-subscription", async (req, res) => {
   const userId = (req as any).session.userId;
   if (!userId || !stripe) return res.status(401).json({ error: "Unauthorized" });
 
@@ -149,15 +151,16 @@ app.post("/api/payments/create-checkout", async (req, res) => {
           price_data: {
             currency: "eur",
             product_data: {
-              name: "50 Crédits Aletheia",
-              description: "50 générations de citations par l'IA",
+              name: "Aletheia Premium",
+              description: "Accès illimité à toute la sagesse d'Aletheia",
             },
-            unit_amount: 200, // 2.00€
+            unit_amount: 299, // 2.99€
+            recurring: { interval: "month" },
           },
           quantity: 1,
         },
       ],
-      mode: "payment",
+      mode: "subscription",
       success_url: `${APP_URL}/?payment=success`,
       cancel_url: `${APP_URL}/?payment=cancel`,
       metadata: { userId }
@@ -175,13 +178,16 @@ app.post("/api/payments/webhook", express.raw({type: 'application/json'}), (req,
   // In a real app, verify signature here
   const event = JSON.parse(req.body.toString());
 
-  if (event.type === 'checkout.session.completed') {
+  if (event.type === 'checkout.session.completed' || event.type === 'invoice.paid') {
     const session = event.data.object;
-    const userId = session.metadata.userId;
-    const users = getUsers();
-    if (users[userId]) {
-      users[userId].credits += 50;
-      saveUsers(users);
+    const userId = session.metadata?.userId;
+    if (userId) {
+      const users = getUsers();
+      if (users[userId]) {
+        users[userId].isPremium = true;
+        users[userId].credits = 999999;
+        saveUsers(users);
+      }
     }
   }
   res.json({received: true});
@@ -196,7 +202,7 @@ app.post("/api/credits/deduct", (req, res) => {
   const users = getUsers();
   const user = users[userId];
 
-  if (user && user.email === 'fozyllll.yt@gmail.com') {
+  if (user && (user.email === 'fozyllll.yt@gmail.com' || user.isPremium)) {
     return res.json({ credits: 999999 });
   }
 
