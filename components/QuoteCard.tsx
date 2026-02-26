@@ -10,7 +10,6 @@ interface QuoteCardProps {
 }
 
 const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language }) => {
-  console.log("Rendering QuoteCard:", quote.id, quote.text.substring(0, 20));
   const [showHeartAnim, setShowHeartAnim] = useState(false);
   const t = TRANSLATIONS[language] || TRANSLATIONS['English'];
 

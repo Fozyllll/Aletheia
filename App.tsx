@@ -472,13 +472,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="relative h-screen w-screen bg-zinc-900 overflow-hidden font-sans">
+    <div className="relative w-full bg-zinc-900 overflow-hidden font-sans" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
       
       {/* Immersive View: No App Name Header */}
 
       {/* Main Feed Layer */}
       <div className={`tab-transition h-full ${activeTab === AppTab.FEED ? 'opacity-100' : 'opacity-0 pointer-events-none scale-95'}`}>
-        <div ref={scrollRef} onScroll={handleScroll} className="snap-container h-screen bg-zinc-900">
+        <div ref={scrollRef} onScroll={handleScroll} className="snap-container bg-zinc-900" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
           {quotes.length > 0 ? (
             quotes.map((quote) => (
               <QuoteCard key={quote.id} quote={quote} onLike={handleLike} onShare={() => {}} language={settings.language} />
@@ -539,7 +539,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Liked Gallery Layer */}
-      <div className={`tab-transition absolute inset-0 h-screen overflow-y-auto bg-[#050505] pt-32 pb-48 px-8 scrollbar-hide ${activeTab === AppTab.LIKED ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`}>
+      <div className={`tab-transition absolute inset-0 overflow-y-auto bg-[#050505] pt-32 pb-48 px-8 scrollbar-hide ${activeTab === AppTab.LIKED ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'}`} style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
         <div className="flex flex-col items-center mb-16 text-center">
             <h2 className="text-white/70 font-ancient text-3xl tracking-[0.3em] uppercase mb-3">{t.favorites}</h2>
             <div className="w-16 h-[1px] bg-white/10" />

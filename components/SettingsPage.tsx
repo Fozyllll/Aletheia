@@ -43,7 +43,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
   };
 
   return (
-    <div className={`tab-transition absolute inset-0 h-screen overflow-y-auto bg-[#030303] pt-40 pb-48 px-10 scrollbar-hide ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'}`}>
+    <div 
+      className={`tab-transition absolute inset-0 overflow-y-auto bg-[#030303] pt-40 pb-48 px-10 scrollbar-hide ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'}`}
+      style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
+    >
       <div className="flex flex-col items-center mb-16 text-center">
         <h2 className="text-white font-ancient text-2xl tracking-[0.2em] uppercase opacity-60 mb-2">{t.settings}</h2>
         <div className="w-12 h-[1px] bg-white/10" />
