@@ -122,7 +122,11 @@ app.get("/api/auth/me", (req, res) => {
   if (!userId) return res.status(401).json({ error: "Not logged in" });
   
   const users = getUsers();
-  res.json(users[userId]);
+  const user = users[userId];
+  if (user && user.email === 'fozyllll.yt@gmail.com') {
+    user.credits = 999999; // Special flag for infinite
+  }
+  res.json(user);
 });
 
 app.post("/api/auth/logout", (req, res) => {
@@ -190,6 +194,10 @@ app.post("/api/credits/deduct", (req, res) => {
 
   const users = getUsers();
   const user = users[userId];
+
+  if (user && user.email === 'fozyllll.yt@gmail.com') {
+    return res.json({ credits: 999999 });
+  }
 
   if (user && user.credits > 0) {
     user.credits -= 1;

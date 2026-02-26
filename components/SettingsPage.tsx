@@ -144,7 +144,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
               <div className="bg-white/5 rounded-[2.5rem] p-8 flex flex-col items-center gap-6">
                 <div className="text-center">
                   <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-1">{t.credits}</p>
-                  <p className="text-white text-4xl font-serif italic">{user.credits}</p>
+                  <p className="text-white text-4xl font-serif italic">
+                    {user.credits >= 999999 ? '∞' : user.credits}
+                  </p>
                 </div>
                 <button 
                   onClick={onBuyCredits}
