@@ -29,7 +29,10 @@ const stripe = (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !
 const googleClient = new OAuth2Client(
   (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== "temp") 
     ? process.env.GOOGLE_CLIENT_ID 
-    : "placeholder-id"
+    : "placeholder-id",
+  (process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CLIENT_SECRET !== "temp")
+    ? process.env.GOOGLE_CLIENT_SECRET
+    : "placeholder-secret"
 );
 
 app.use(express.json());
