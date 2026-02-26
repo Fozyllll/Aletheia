@@ -123,17 +123,20 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language,
         </h2>
         
         {/* Signature Stack - Positioned below the quote */}
-        <div className="mt-12 flex flex-col items-center gap-5 text-reveal" style={{ animationDelay: '0.6s' }}>
-          <div className="w-8 h-[1px] bg-white/30" />
-          <h3 className="font-ancient text-sm tracking-[1em] text-white/40 uppercase">
+        <div className="mt-12 flex flex-col items-center gap-5 text-reveal drop-shadow-lg relative" style={{ animationDelay: '0.6s' }}>
+          {/* Subtle glow/shadow for readability */}
+          <div className="absolute inset-0 -inset-y-10 bg-black/20 blur-2xl rounded-full -z-10" />
+          
+          <div className="w-8 h-[1px] bg-white/50" />
+          <h3 className="font-ancient text-sm tracking-[1em] text-white/80 uppercase">
             Aletheia
           </h3>
           <div className="flex flex-col items-center gap-1">
-            <p className="text-white/20 font-bold text-[9px] tracking-[0.4em] uppercase">
+            <p className="text-white/60 font-bold text-[9px] tracking-[0.4em] uppercase">
               {quote.isAI ? t.aiGenerated : quote.author}
             </p>
             {!quote.isAI && (
-               <p className="text-white/5 text-[7px] font-bold tracking-[0.2em] uppercase">
+               <p className="text-white/30 text-[7px] font-bold tracking-[0.2em] uppercase">
                 {t.humanSource}
               </p>
             )}

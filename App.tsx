@@ -125,7 +125,7 @@ const PREFETCH_THRESHOLD = 3;
 const FREE_DAILY_LIMIT = 20;
 
 const App: React.FC = () => {
-  const [quotes, setQuotes] = useState<Quote[]>(STARTER_QUOTES);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
   const [likedQuotes, setLikedQuotes] = useState<Quote[]>([]);
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.FEED);
   const [loading, setLoading] = useState(false);
@@ -365,10 +365,19 @@ const App: React.FC = () => {
       const pool = getCachedPool();
       if (pool.length > 0) {
         const cachedQuotes = pool.slice(0, 5);
-        setQuotes(prev => [...prev, ...cachedQuotes]);
+        setQuotes(cachedQuotes);
         cachedQuotes.forEach(q => seenQuotesRef.current.add(q.text));
         saveCachedPool(pool.slice(5));
         fillImagesForQuotes(cachedQuotes);
+      } else {
+        // If no pool, check if we should show starters
+        const savedSeen = localStorage.getItem('seen_quotes');
+        if (!savedSeen) {
+          // First time ever: show starters
+          setQuotes(STARTER_QUOTES);
+          STARTER_QUOTES.forEach(q => seenQuotesRef.current.add(q.text));
+        }
+        // If savedSeen exists, we don't show starters, we wait for prefetch
       }
       
       
