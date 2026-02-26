@@ -78,7 +78,10 @@ export const TRANSLATIONS: Record<Language, any> = {
     noResults: 'No truths found.',
     status: 'Status',
     premium: 'Premium',
-    upgrade: 'Upgrade to Premium (2.99€/mo)'
+    upgrade: 'Upgrade to Premium (2.99€/mo)',
+    testNotif: 'Test Notification',
+    notifSent: 'Notification sent!',
+    notifError: 'Notification error'
   },
   French: {
     appName: 'Aletheia',
@@ -117,7 +120,10 @@ export const TRANSLATIONS: Record<Language, any> = {
     noResults: 'Aucune vérité trouvée.',
     status: 'Statut',
     premium: 'Premium',
-    upgrade: 'Passer au Premium (2.99€/mois)'
+    upgrade: 'Passer au Premium (2.99€/mois)',
+    testNotif: 'Tester la notification',
+    notifSent: 'Notification envoyée !',
+    notifError: 'Erreur de notification'
   },
   // Added Spanish translations to complete the Record type
   Spanish: {
@@ -158,7 +164,10 @@ export const TRANSLATIONS: Record<Language, any> = {
     noResults: 'No se han encontrado verdades.',
     status: 'Estado',
     premium: 'Premium',
-    upgrade: 'Pasar a Premium (2.99€/mes)'
+    upgrade: 'Pasar a Premium (2.99€/mes)',
+    testNotif: 'Probar notificación',
+    notifSent: '¡Notificación enviada!',
+    notifError: 'Error de notificación'
   },
   // Added German translations to complete the Record type
   German: {

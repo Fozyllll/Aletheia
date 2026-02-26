@@ -128,7 +128,7 @@ const App: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [likedQuotes, setLikedQuotes] = useState<Quote[]>([]);
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.FEED);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
   const [apiAvailable, setApiAvailable] = useState(true);
   const [user, setUser] = useState<User | null>(null);
@@ -143,10 +143,17 @@ const App: React.FC = () => {
     const saved = localStorage.getItem('daily_count');
     const today = new Date().toDateString();
     if (saved) {
-      const { date, count } = JSON.parse(saved);
-      return date === today ? count : 0;
+      try {
+        const { date, count } = JSON.parse(saved);
+        return date === today ? count : 0;
+      } catch (e) { return 0; }
     }
     return 0;
+  });
+  
+  const [history, setHistory] = useState<Quote[]>(() => {
+    const saved = localStorage.getItem('quote_history');
+    return saved ? JSON.parse(saved) : [];
   });
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -183,6 +190,10 @@ const App: React.FC = () => {
     localStorage.setItem('seen_quotes', JSON.stringify(arr));
   }, [quotes]);
 
+  useEffect(() => {
+    localStorage.setItem('quote_history', JSON.stringify(history.slice(-50)));
+  }, [history]);
+
   const t = TRANSLATIONS[settings.language] || TRANSLATIONS['French'];
 
   const closeTutorial = () => {
@@ -199,6 +210,11 @@ const App: React.FC = () => {
       try {
         const newQuotes = await generateQuotes(5, settings.language, []);
         setQuotes(newQuotes);
+        setHistory(prev => {
+          const newHistory = [...prev, ...newQuotes];
+          const map = new Map(newHistory.map(q => [q.text, q]));
+          return Array.from(map.values()).slice(-50);
+        });
         newQuotes.forEach(q => seenQuotesRef.current.add(q.text));
         fillImagesForQuotes(newQuotes);
       } catch (e) {
@@ -321,6 +337,7 @@ const App: React.FC = () => {
 
   const handleBuyCredits = async () => {
     try {
+      setApiAvailable(true);
       const res = await fetch("/api/payments/create-subscription", { method: "POST" });
       const { url } = await res.json();
       window.location.href = url;
@@ -333,6 +350,7 @@ const App: React.FC = () => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
         fetchUser();
+        setApiAvailable(true);
       }
     };
     window.addEventListener('message', handleMessage);
@@ -366,15 +384,24 @@ const App: React.FC = () => {
       if (pool.length > 0) {
         const cachedQuotes = pool.slice(0, 5);
         setQuotes(cachedQuotes);
+        setHistory(prev => {
+          const newHistory = [...prev, ...cachedQuotes];
+          const map = new Map(newHistory.map(q => [q.text, q]));
+          return Array.from(map.values()).slice(-50);
+        });
         cachedQuotes.forEach(q => seenQuotesRef.current.add(q.text));
         saveCachedPool(pool.slice(5));
         fillImagesForQuotes(cachedQuotes);
+      } else if (history.length > 0) {
+        // Load some from history if pool is empty
+        setQuotes(history.slice(-10));
       } else {
-        // If no pool, check if we should show starters
+        // If no pool and no history, check if we should show starters
         const savedSeen = localStorage.getItem('seen_quotes');
         if (!savedSeen) {
           // First time ever: show starters
           setQuotes(STARTER_QUOTES);
+          setHistory(STARTER_QUOTES);
           STARTER_QUOTES.forEach(q => seenQuotesRef.current.add(q.text));
         }
         // If savedSeen exists, we don't show starters, we wait for prefetch
@@ -382,9 +409,13 @@ const App: React.FC = () => {
       
       
       // Prefetch fresh ones in background without blocking the UI
-      prefetchQuotes(currentLang).catch(err => {
+      try {
+        await prefetchQuotes(currentLang);
+      } catch (err) {
         console.error("Background prefetch failed", err);
-      });
+      } finally {
+        setLoading(false);
+      }
     };
     init();
   }, []);
@@ -406,7 +437,7 @@ const App: React.FC = () => {
     }
 
     // Check credits if logged in
-    if (user && user.credits <= 0) {
+    if (user && user.credits <= 0 && !user.isPremium) {
       setApiAvailable(false);
       return;
     }
@@ -438,6 +469,11 @@ const App: React.FC = () => {
         if (prev.length < 10) {
           const nextBatch = updatedPool.slice(0, 3);
           nextBatch.forEach(q => seenQuotesRef.current.add(q.text));
+          setHistory(prevHist => {
+            const newHistory = [...prevHist, ...nextBatch];
+            const map = new Map(newHistory.map(q => [q.text, q]));
+            return Array.from(map.values()).slice(-50);
+          });
           saveCachedPool(updatedPool.slice(3));
           fillImagesForQuotes(nextBatch);
           return [...prev, ...nextBatch];
@@ -494,7 +530,7 @@ const App: React.FC = () => {
     const scrollPosition = scrollTop + clientHeight;
     
     // Check daily limit for free users
-    const isPro = user && (user.credits > 0 || user.isPremium);
+    const isPro = user?.isPremium || (user && user.credits > 0);
     if (!isPro && dailyCount >= FREE_DAILY_LIMIT) {
       return;
     }
@@ -505,6 +541,12 @@ const App: React.FC = () => {
         const nextBatch = pool.slice(0, 2);
         nextBatch.forEach(q => seenQuotesRef.current.add(q.text));
         setQuotes(prev => [...prev, ...nextBatch]);
+        setHistory(prev => {
+          const newHistory = [...prev, ...nextBatch];
+          // Keep unique by text
+          const map = new Map(newHistory.map(q => [q.text, q]));
+          return Array.from(map.values()).slice(-50);
+        });
         setDailyCount((prev: number) => prev + nextBatch.length);
         saveCachedPool(pool.slice(2));
         fillImagesForQuotes(nextBatch);
@@ -599,7 +641,7 @@ const App: React.FC = () => {
           )}
           
           {/* Daily Limit Message */}
-          {!(user && (user.credits > 0 || user.isPremium)) && dailyCount >= FREE_DAILY_LIMIT && (
+          {!(user?.isPremium) && dailyCount >= FREE_DAILY_LIMIT && (
             <div className="snap-item flex flex-col items-center justify-center bg-black p-12 text-center">
               <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-8">
                 <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -607,17 +649,31 @@ const App: React.FC = () => {
                 </svg>
               </div>
               <p className="text-white/70 font-ancient text-[12px] tracking-[0.4em] uppercase leading-loose mb-6">
-                Limite journalière atteinte
+                {dailyCount >= FREE_DAILY_LIMIT ? 'Limite journalière atteinte' : 'Sagesse épuisée'}
               </p>
               <p className="text-white/30 text-[10px] leading-relaxed mb-10 max-w-xs">
-                Vous avez exploré 20 vérités aujourd'hui. Connectez-vous ou passez au forfait Premium pour une sagesse illimitée.
+                {user?.isPremium 
+                  ? "Vous avez exploré toutes les vérités disponibles pour le moment. Revenez plus tard !"
+                  : `Vous avez exploré ${FREE_DAILY_LIMIT} vérités aujourd'hui. Connectez-vous ou passez au forfait Premium pour une sagesse illimitée.`}
               </p>
-              <button 
-                onClick={() => setActiveTab(AppTab.SETTINGS)}
-                className="px-8 py-4 bg-white text-black font-ancient text-[10px] tracking-[0.3em] uppercase rounded-full"
-              >
-                Débloquer l'infini
-              </button>
+              
+              <div className="flex flex-col gap-4 w-full max-w-xs">
+                {!user?.isPremium && (
+                  <button 
+                    onClick={handleBuyCredits}
+                    className="w-full py-5 bg-white text-black font-ancient text-[10px] tracking-[0.3em] uppercase rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform"
+                  >
+                    {t.upgrade}
+                  </button>
+                )}
+                
+                <button 
+                  onClick={() => setActiveTab(AppTab.SETTINGS)}
+                  className="w-full py-4 bg-white/5 text-white/40 border border-white/10 font-ancient text-[10px] tracking-[0.3em] uppercase rounded-full hover:bg-white/10 transition-colors"
+                >
+                  {user ? t.settings : t.login}
+                </button>
+              </div>
             </div>
           )}
           {isGeneratingMore && apiAvailable && (
@@ -634,12 +690,29 @@ const App: React.FC = () => {
           {!apiAvailable && (
             <div className="snap-item flex flex-col items-center justify-center bg-black p-12 text-center">
               <div className="w-12 h-[1px] bg-white/10 mb-8" />
-              <p className="text-white/30 font-ancient text-[10px] tracking-[0.4em] uppercase leading-loose">
-                Vous avez atteint les limites de la sagesse actuelle.
+              <p className="text-white/30 font-ancient text-[10px] tracking-[0.4em] uppercase leading-loose mb-8">
+                {user && user.credits <= 0 && !user.isPremium 
+                  ? "Vous n'avez plus de crédits de sagesse."
+                  : "Vous avez atteint les limites de la sagesse actuelle."}
               </p>
-              <p className="mt-4 text-white/10 text-[8px] uppercase tracking-widest">
-                Revenez plus tard pour de nouvelles vérités.
-              </p>
+              
+              <div className="flex flex-col gap-4 w-full max-w-xs">
+                {user && !user.isPremium && (
+                  <button 
+                    onClick={handleBuyCredits}
+                    className="w-full py-5 bg-white text-black font-ancient text-[10px] tracking-[0.3em] uppercase rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform"
+                  >
+                    {t.upgrade}
+                  </button>
+                )}
+                
+                <button 
+                  onClick={() => setActiveTab(AppTab.SETTINGS)}
+                  className="w-full py-4 bg-white/5 text-white/40 border border-white/10 font-ancient text-[10px] tracking-[0.3em] uppercase rounded-full hover:bg-white/10 transition-colors"
+                >
+                  {user ? t.settings : t.login}
+                </button>
+              </div>
             </div>
           )}
         </div>

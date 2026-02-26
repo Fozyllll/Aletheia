@@ -105,16 +105,45 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
           </div>
 
           {settings.notificationsEnabled && (
-            <div className="pt-8 border-t border-white/5 space-y-3">
-              {frequencies.map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() => onUpdate({ ...settings, notificationFrequency: f.value as any })}
-                  className={`w-full text-center px-6 py-4 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-500 ${settings.notificationFrequency === f.value ? 'bg-white/10 text-white' : 'text-white/10 hover:text-white/30'}`}
-                >
-                  {f.label}
-                </button>
-              ))}
+            <div className="pt-8 border-t border-white/5 space-y-6">
+              <div className="space-y-3">
+                {frequencies.map((f) => (
+                  <button
+                    key={f.value}
+                    onClick={() => onUpdate({ ...settings, notificationFrequency: f.value as any })}
+                    className={`w-full text-center px-6 py-4 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-500 ${settings.notificationFrequency === f.value ? 'bg-white/10 text-white' : 'text-white/10 hover:text-white/30'}`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              
+              <button 
+                onClick={async () => {
+                  if (!("Notification" in window)) {
+                    alert(t.notifError);
+                    return;
+                  }
+                  
+                  let permission = Notification.permission;
+                  if (permission === "default") {
+                    permission = await Notification.requestPermission();
+                  }
+                  
+                  if (permission === "granted") {
+                    new Notification(t.appName, {
+                      body: t.notifDesc,
+                      icon: '/favicon.ico'
+                    });
+                    alert(t.notifSent);
+                  } else {
+                    alert(t.notifError + ": " + permission);
+                  }
+                }}
+                className="w-full py-4 bg-white/5 text-white/40 border border-white/5 font-ancient text-[9px] tracking-[0.3em] uppercase rounded-2xl hover:bg-white/10 transition-colors"
+              >
+                {t.testNotif}
+              </button>
             </div>
           )}
         </section>
