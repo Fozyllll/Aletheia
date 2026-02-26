@@ -7,6 +7,7 @@ export interface Quote {
   imageUrl?: string;
   isLiked?: boolean;
   isAI: boolean;
+  likesCount?: number;
 }
 
 export enum AppTab {
@@ -71,7 +72,9 @@ export const TRANSLATIONS: Record<Language, any> = {
     credits: 'Credits',
     buyCredits: 'Buy Credits (50)',
     account: 'Account',
-    noCredits: 'No credits remaining'
+    noCredits: 'No credits remaining',
+    search: 'Search truths...',
+    noResults: 'No truths found.'
   },
   French: {
     appName: 'Aletheia',
@@ -104,7 +107,9 @@ export const TRANSLATIONS: Record<Language, any> = {
     credits: 'Crédits',
     buyCredits: 'Acheter des crédits (50)',
     account: 'Compte',
-    noCredits: 'Plus de crédits'
+    noCredits: 'Plus de crédits',
+    search: 'Chercher une vérité...',
+    noResults: 'Aucune vérité trouvée.'
   },
   // Added Spanish translations to complete the Record type
   Spanish: {

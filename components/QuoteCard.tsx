@@ -7,19 +7,53 @@ interface QuoteCardProps {
   onLike: () => void;
   onShare: (quote: Quote) => void;
   language: Language;
+  isLowEndDevice?: boolean;
 }
 
-const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language }) => {
+const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language, isLowEndDevice }) => {
   const [showHeartAnim, setShowHeartAnim] = useState(false);
+  const [likesCount, setLikesCount] = useState(quote.likesCount || 0);
   const lastTap = React.useRef<number>(0);
   const t = TRANSLATIONS[language] || TRANSLATIONS['English'];
 
-  const handleLike = () => {
+  useEffect(() => {
+    // Fetch global likes count on mount
+    const fetchLikes = async () => {
+      try {
+        const res = await fetch(`/api/likes/count?quoteText=${encodeURIComponent(quote.text)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setLikesCount(data.likesCount);
+        }
+      } catch (e) {}
+    };
+    fetchLikes();
+  }, [quote.text]);
+
+  const handleLike = async () => {
+    const wasLiked = quote.isLiked;
     onLike();
-    if (!quote.isLiked) {
+    
+    // Optimistic update
+    setLikesCount(prev => wasLiked ? Math.max(0, prev - 1) : prev + 1);
+
+    if (!wasLiked) {
       setShowHeartAnim(true);
       setTimeout(() => setShowHeartAnim(false), 800);
     }
+
+    // Sync with server
+    try {
+      const res = await fetch("/api/likes/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quoteText: quote.text, increment: !wasLiked })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLikesCount(data.likesCount);
+      }
+    } catch (e) {}
   };
 
   const handleTouchStart = () => {
@@ -74,9 +108,9 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language 
       <div className="absolute inset-0 z-0 overflow-hidden" style={{ background: placeholderGradient }}>
         {quote.imageUrl && (
           <img 
-            src={quote.imageUrl} 
+            src={isLowEndDevice ? quote.imageUrl.replace('1080/1920', '400/700') : quote.imageUrl} 
             alt="Background" 
-            className="w-full h-full object-cover opacity-50 ken-burns transition-opacity duration-1000"
+            className={`w-full h-full object-cover opacity-50 transition-opacity duration-1000 ${isLowEndDevice ? '' : 'ken-burns'}`}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black" />
@@ -121,7 +155,10 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language 
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </div>
-          <span className="text-white/30 text-[9px] font-black uppercase tracking-widest">{quote.isLiked ? t.likedBtn : t.like}</span>
+          <div className="flex flex-col items-center">
+            <span className="text-white text-[11px] font-bold mb-0.5">{likesCount > 0 ? likesCount : ''}</span>
+            <span className="text-white/30 text-[9px] font-black uppercase tracking-widest">{quote.isLiked ? t.likedBtn : t.like}</span>
+          </div>
         </button>
 
         <button 

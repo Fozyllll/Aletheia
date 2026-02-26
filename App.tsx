@@ -132,6 +132,9 @@ const App: React.FC = () => {
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
   const [apiAvailable, setApiAvailable] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
   const [settings, setSettings] = useState<AppSettings>(() => {
     const saved = localStorage.getItem('aletheia_settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
@@ -148,6 +151,13 @@ const App: React.FC = () => {
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const seenQuotesRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    // Basic device capability detection
+    const isLowMemory = (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setIsLowEndDevice(!!(isLowMemory || (isMobile && !window.matchMedia('(min-width: 1024px)').matches)));
+  }, []);
 
   useEffect(() => {
     const savedSeen = localStorage.getItem('seen_quotes');
@@ -497,6 +507,11 @@ const App: React.FC = () => {
     }
   }, [activeTab, settings.language, prefetchQuotes, fillImagesForQuotes, apiAvailable, dailyCount, user]);
 
+  const filteredQuotes = quotes.filter(q => 
+    q.text.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    q.author.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black flex flex-col items-center justify-center p-12 transition-opacity duration-1000 z-[100]">
@@ -517,16 +532,60 @@ const App: React.FC = () => {
 
       {/* Main Feed Layer */}
       <div className={`tab-transition h-full ${activeTab === AppTab.FEED ? 'opacity-100' : 'opacity-0 pointer-events-none scale-95'}`}>
+        
+        {/* Search Header */}
+        <div className="absolute top-0 left-0 right-0 z-50 p-6 flex justify-between items-start pointer-events-none">
+          <div /> {/* Spacer */}
+          <div className="flex flex-col items-end gap-3 pointer-events-auto">
+            <button 
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="p-4 rounded-full glass hover:bg-white/10 transition-all active:scale-90"
+            >
+              <svg className="w-6 h-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            
+            {isSearchOpen && (
+              <div className="text-reveal">
+                <input 
+                  autoFocus
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t.search}
+                  className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 text-white text-xs font-ancient tracking-widest outline-none w-64 shadow-2xl"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
         <div ref={scrollRef} onScroll={handleScroll} className="snap-container bg-zinc-900" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
-          {quotes.length > 0 ? (
-            quotes.map((quote) => (
-              <QuoteCard key={quote.id} quote={quote} onLike={() => handleLike(quote)} onShare={() => {}} language={settings.language} />
+          {filteredQuotes.length > 0 ? (
+            filteredQuotes.map((quote) => (
+              <QuoteCard 
+                key={quote.id} 
+                quote={quote} 
+                onLike={() => handleLike(quote)} 
+                onShare={() => {}} 
+                language={settings.language} 
+                isLowEndDevice={isLowEndDevice}
+              />
             ))
           ) : (
-             <div className="h-full w-full flex items-center justify-center bg-black">
+             <div className="h-full w-full flex flex-col items-center justify-center bg-black gap-6">
                 <div className="text-white/20 font-ancient uppercase tracking-widest text-[10px] animate-pulse">
-                  RECHERCHE DE VÉRITÉ...
+                  {searchQuery ? t.noResults : 'RECHERCHE DE VÉRITÉ...'}
                 </div>
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="text-white/40 text-[9px] uppercase tracking-[0.3em] underline underline-offset-8"
+                  >
+                    Effacer la recherche
+                  </button>
+                )}
              </div>
           )}
           

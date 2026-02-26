@@ -11,10 +11,14 @@ import { GoogleGenAI } from "@google/genai";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const USERS_FILE = path.join(__dirname, "users.json");
+const LIKES_FILE = path.join(__dirname, "likes_stats.json");
 
-// Initialize users file if not exists
+// Initialize files if not exists
 if (!fs.existsSync(USERS_FILE)) {
   fs.writeFileSync(USERS_FILE, JSON.stringify({}));
+}
+if (!fs.existsSync(LIKES_FILE)) {
+  fs.writeFileSync(LIKES_FILE, JSON.stringify({}));
 }
 
 const app = express();
@@ -51,6 +55,9 @@ app.use(cookieSession({
 // Helper to get/save users
 const getUsers = () => JSON.parse(fs.readFileSync(USERS_FILE, "utf-8"));
 const saveUsers = (users: any) => fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+
+const getLikesStats = () => JSON.parse(fs.readFileSync(LIKES_FILE, "utf-8"));
+const saveLikesStats = (stats: any) => fs.writeFileSync(LIKES_FILE, JSON.stringify(stats, null, 2));
 
 // --- AUTH ROUTES ---
 
@@ -240,6 +247,23 @@ app.post("/api/likes", (req, res) => {
   } else {
     res.status(404).json({ error: "User not found" });
   }
+});
+
+app.post("/api/likes/toggle", (req, res) => {
+  const { quoteText, increment } = req.body;
+  if (!quoteText) return res.status(400).json({ error: "Missing quote text" });
+
+  const stats = getLikesStats();
+  const current = stats[quoteText] || 0;
+  stats[quoteText] = Math.max(0, current + (increment ? 1 : -1));
+  saveLikesStats(stats);
+  res.json({ likesCount: stats[quoteText] });
+});
+
+app.get("/api/likes/count", (req, res) => {
+  const { quoteText } = req.query;
+  const stats = getLikesStats();
+  res.json({ likesCount: stats[quoteText as string] || 0 });
 });
 
 // --- START SERVER ---
