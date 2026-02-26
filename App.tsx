@@ -543,7 +543,7 @@ const App: React.FC = () => {
       <div className={`tab-transition h-full ${activeTab === AppTab.FEED ? 'opacity-100' : 'opacity-0 pointer-events-none scale-95'}`}>
         
         {/* Search Header */}
-        <div className="absolute top-0 left-0 right-0 z-50 p-6 flex justify-between items-start pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 z-50 p-4 sm:p-6 flex justify-between items-start pointer-events-none">
           <div /> {/* Spacer */}
           <div className="flex flex-col items-end gap-3 pointer-events-auto">
             <button 

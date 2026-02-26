@@ -117,13 +117,15 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language,
       </div>
 
       {/* Quote Content - Centered */}
-      <div className="relative z-10 px-10 pb-48 text-center w-full max-w-2xl pointer-events-none select-none">
-        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white leading-tight italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)] text-reveal" style={{ animationDelay: '0.2s' }}>
-          "{quote.text}"
-        </h2>
+      <div className="relative z-10 px-6 sm:px-10 pb-32 sm:pb-48 text-center w-full max-w-2xl pointer-events-none select-none flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="max-h-[50vh] overflow-y-auto scrollbar-hide pointer-events-auto">
+          <h2 className="font-serif text-[clamp(1.5rem,6vh,3.5rem)] text-white leading-tight italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)] text-reveal" style={{ animationDelay: '0.2s' }}>
+            "{quote.text}"
+          </h2>
+        </div>
         
         {/* Signature Stack - Positioned below the quote */}
-        <div className="mt-12 flex flex-col items-center gap-5 text-reveal drop-shadow-lg relative" style={{ animationDelay: '0.6s' }}>
+        <div className="mt-8 sm:mt-12 flex flex-col items-center gap-3 sm:gap-5 text-reveal drop-shadow-lg relative" style={{ animationDelay: '0.6s' }}>
           {/* Subtle glow/shadow for readability */}
           <div className="absolute inset-0 -inset-y-10 bg-black/20 blur-2xl rounded-full -z-10" />
           
@@ -145,7 +147,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language,
       </div>
 
       {/* Action Buttons - Sidebar Style */}
-      <div className="absolute right-6 bottom-44 flex flex-col items-center gap-10 z-20">
+      <div className="absolute right-4 sm:right-6 bottom-32 sm:bottom-44 flex flex-col items-center gap-6 sm:gap-10 z-20">
         <button 
           onClick={(e) => { e.stopPropagation(); handleLike(); }}
           className="flex flex-col items-center gap-2 group active:scale-75 transition-transform duration-300"

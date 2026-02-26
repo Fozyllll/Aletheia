@@ -44,18 +44,18 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
 
   return (
     <div 
-      className={`tab-transition absolute inset-0 overflow-y-auto bg-[#030303] pt-40 pb-48 px-10 scrollbar-hide ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'}`}
+      className={`tab-transition absolute inset-0 overflow-y-auto bg-[#030303] pt-24 sm:pt-40 pb-48 px-6 sm:px-10 scrollbar-hide ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'}`}
       style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
     >
-      <div className="flex flex-col items-center mb-16 text-center">
-        <h2 className="text-white font-ancient text-2xl tracking-[0.2em] uppercase opacity-60 mb-2">{t.settings}</h2>
+      <div className="flex flex-col items-center mb-10 sm:mb-16 text-center">
+        <h2 className="text-white font-ancient text-xl sm:text-2xl tracking-[0.2em] uppercase opacity-60 mb-2">{t.settings}</h2>
         <div className="w-12 h-[1px] bg-white/10" />
       </div>
       
-      <div className="space-y-16 max-w-lg mx-auto">
+      <div className="space-y-12 sm:space-y-16 max-w-lg mx-auto">
         <section>
           <label className="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] block mb-8 text-center">{t.avatar}</label>
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6">
             {avatars.map(emoji => (
               <button
                 key={emoji}
@@ -77,7 +77,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
               <button
                 key={lang}
                 onClick={() => onUpdate({ ...settings, language: lang })}
-                className={`w-full px-8 py-6 rounded-[2.5rem] text-xs font-black tracking-widest flex justify-between items-center transition-all duration-500 ${
+                className={`w-full px-6 sm:px-8 py-4 sm:py-6 rounded-[2rem] sm:rounded-[2.5rem] text-xs font-black tracking-widest flex justify-between items-center transition-all duration-500 ${
                   settings.language === lang ? 'bg-white text-black shadow-xl' : 'bg-white/5 text-white/30 hover:text-white/50'
                 }`}
               >
@@ -90,11 +90,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
           </div>
         </section>
 
-        <section className="bg-white/5 rounded-[3rem] p-10 space-y-8">
+        <section className="bg-white/5 rounded-[2.5rem] sm:rounded-[3rem] p-8 sm:p-10 space-y-8">
           <div className="flex justify-between items-center">
             <div>
               <label className="text-white/90 font-ancient text-xl tracking-wider block">{t.notifications}</label>
-              <p className="text-white/20 text-[10px] font-medium mt-2 tracking-wide">Wisdom calls in silence.</p>
+              <p className="text-white/40 text-[10px] font-medium mt-2 tracking-wide">{t.notifDesc}</p>
             </div>
             <button 
               onClick={handleToggleNotifications}
@@ -126,7 +126,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
             <div className="flex flex-col items-center gap-6">
               <button 
                 onClick={onLogin}
-                className="w-full py-6 bg-white text-black font-ancient text-xs tracking-[0.3em] uppercase rounded-[2.5rem] hover:scale-[1.02] transition-transform"
+                className="w-full py-5 sm:py-6 bg-white text-black font-ancient text-xs tracking-[0.3em] uppercase rounded-[2rem] sm:rounded-[2.5rem] hover:scale-[1.02] transition-transform"
               >
                 {t.login}
               </button>
@@ -136,15 +136,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="flex items-center gap-6 bg-white/5 p-6 rounded-[2.5rem]">
-                <img src={user.picture} className="w-16 h-16 rounded-full border border-white/10" alt={user.name} />
+              <div className="flex items-center gap-4 sm:gap-6 bg-white/10 p-5 sm:p-6 rounded-[2rem] sm:rounded-[2.5rem] border border-white/5">
+                <img src={user.picture} className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-white/20" alt={user.name} />
                 <div>
-                  <p className="text-white font-medium text-sm">{user.name}</p>
-                  <p className="text-white/30 text-[10px]">{user.email}</p>
+                  <p className="text-white font-bold text-sm sm:text-base tracking-tight">{user.name}</p>
+                  <p className="text-white/50 text-[10px] sm:text-[11px] font-medium">{user.email}</p>
                 </div>
               </div>
 
-              <div className="bg-white/5 rounded-[2.5rem] p-8 flex flex-col items-center gap-6">
+              <div className="bg-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 flex flex-col items-center gap-6">
                 <div className="text-center">
                   <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-1">
                     {user.isPremium ? 'Statut' : t.credits}
