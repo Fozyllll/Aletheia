@@ -35,6 +35,7 @@ export interface AppSettings {
   notificationsEnabled: boolean;
   notificationFrequency: '1h' | '4h' | 'daily';
   profile: UserProfile;
+  tutorialSeen: boolean;
 }
 
 export const TRANSLATIONS: Record<Language, any> = {

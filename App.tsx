@@ -116,26 +116,93 @@ const DEFAULT_SETTINGS: AppSettings = {
   language: 'French',
   notificationsEnabled: false,
   notificationFrequency: 'daily',
-  profile: DEFAULT_PROFILE
+  profile: DEFAULT_PROFILE,
+  tutorialSeen: false
 };
 
 const CACHE_SIZE = 10;
 const PREFETCH_THRESHOLD = 3;
+const FREE_DAILY_LIMIT = 20;
 
 const App: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>(STARTER_QUOTES);
   const [likedQuotes, setLikedQuotes] = useState<Quote[]>([]);
   const [activeTab, setActiveTab] = useState<AppTab>(AppTab.FEED);
-  const [loading, setLoading] = useState(false); // Start immediately with starter quotes
+  const [loading, setLoading] = useState(false);
   const [isGeneratingMore, setIsGeneratingMore] = useState(false);
   const [apiAvailable, setApiAvailable] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<AppSettings>(() => {
+    const saved = localStorage.getItem('aletheia_settings');
+    return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
+  });
+  const [dailyCount, setDailyCount] = useState(() => {
+    const saved = localStorage.getItem('daily_count');
+    const today = new Date().toDateString();
+    if (saved) {
+      const { date, count } = JSON.parse(saved);
+      return date === today ? count : 0;
+    }
+    return 0;
+  });
   
   const scrollRef = useRef<HTMLDivElement>(null);
-  const seenQuotesRef = useRef<Set<string>>(new Set(STARTER_QUOTES.map(q => q.text)));
+  const seenQuotesRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const savedSeen = localStorage.getItem('seen_quotes');
+    if (savedSeen) {
+      const arr = JSON.parse(savedSeen);
+      seenQuotesRef.current = new Set(arr);
+    } else {
+      STARTER_QUOTES.forEach(q => seenQuotesRef.current.add(q.text));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('aletheia_settings', JSON.stringify(settings));
+  }, [settings]);
+
+  useEffect(() => {
+    const today = new Date().toDateString();
+    localStorage.setItem('daily_count', JSON.stringify({ date: today, count: dailyCount }));
+  }, [dailyCount]);
+
+  useEffect(() => {
+    const arr = Array.from(seenQuotesRef.current).slice(-200); // Keep last 200 to avoid bloat
+    localStorage.setItem('seen_quotes', JSON.stringify(arr));
+  }, [quotes]);
 
   const t = TRANSLATIONS[settings.language] || TRANSLATIONS['French'];
+
+  const closeTutorial = () => {
+    setSettings(prev => ({ ...prev, tutorialSeen: true }));
+  };
+
+  // Refresh feed when language changes
+  useEffect(() => {
+    const refreshFeed = async () => {
+      setLoading(true);
+      setQuotes([]);
+      seenQuotesRef.current.clear();
+      
+      try {
+        const newQuotes = await generateQuotes(5, settings.language, []);
+        setQuotes(newQuotes);
+        newQuotes.forEach(q => seenQuotesRef.current.add(q.text));
+        fillImagesForQuotes(newQuotes);
+      } catch (e) {
+        setQuotes(STARTER_QUOTES);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    // Only refresh if it's not the first load (starter quotes are French)
+    if (settings.language !== 'French' || quotes.length === 0) {
+      refreshFeed();
+    }
+  }, [settings.language]);
 
   const getCachedPool = (): Quote[] => {
     try {
@@ -368,12 +435,19 @@ const App: React.FC = () => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     const scrollPosition = scrollTop + clientHeight;
     
+    // Check daily limit for free users
+    const isPro = user && user.credits > 0;
+    if (!isPro && dailyCount >= FREE_DAILY_LIMIT) {
+      return;
+    }
+
     if (activeTab === AppTab.FEED && scrollHeight - scrollPosition < clientHeight * 3) {
       const pool = getCachedPool();
       if (pool.length > 0) {
         const nextBatch = pool.slice(0, 2);
         nextBatch.forEach(q => seenQuotesRef.current.add(q.text));
         setQuotes(prev => [...prev, ...nextBatch]);
+        setDailyCount((prev: number) => prev + nextBatch.length);
         saveCachedPool(pool.slice(2));
         fillImagesForQuotes(nextBatch);
       }
@@ -382,7 +456,7 @@ const App: React.FC = () => {
         prefetchQuotes(settings.language);
       }
     }
-  }, [activeTab, settings.language, prefetchQuotes, fillImagesForQuotes, apiAvailable]);
+  }, [activeTab, settings.language, prefetchQuotes, fillImagesForQuotes, apiAvailable, dailyCount, user]);
 
   if (loading) {
     return (
@@ -415,6 +489,29 @@ const App: React.FC = () => {
                   RECHERCHE DE VÉRITÉ...
                 </div>
              </div>
+          )}
+          
+          {/* Daily Limit Message */}
+          {!(user && user.credits > 0) && dailyCount >= FREE_DAILY_LIMIT && (
+            <div className="snap-item flex flex-col items-center justify-center bg-black p-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-8">
+                <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <p className="text-white/70 font-ancient text-[12px] tracking-[0.4em] uppercase leading-loose mb-6">
+                Limite journalière atteinte
+              </p>
+              <p className="text-white/30 text-[10px] leading-relaxed mb-10 max-w-xs">
+                Vous avez exploré 20 vérités aujourd'hui. Connectez-vous ou passez au forfait Premium pour une sagesse illimitée.
+              </p>
+              <button 
+                onClick={() => setActiveTab(AppTab.SETTINGS)}
+                className="px-8 py-4 bg-white text-black font-ancient text-[10px] tracking-[0.3em] uppercase rounded-full"
+              >
+                Débloquer l'infini
+              </button>
+            </div>
           )}
           {isGeneratingMore && apiAvailable && (
             <div className="snap-item flex flex-col items-center justify-center bg-black">
@@ -516,6 +613,27 @@ const App: React.FC = () => {
           </button>
         </nav>
       </div>
+
+      {/* Tutorial Overlay */}
+      {!settings.tutorialSeen && (
+        <div className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-12 text-center">
+          <div className="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center mb-12 animate-bounce">
+            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+          <h2 className="text-white font-ancient text-3xl tracking-[0.3em] uppercase mb-6">Bienvenue sur Aletheia</h2>
+          <p className="text-white/40 text-[11px] tracking-widest leading-loose mb-12 max-w-xs">
+            Faites glisser vers le haut pour découvrir de nouvelles vérités. Double-cliquez pour aimer une citation.
+          </p>
+          <button 
+            onClick={closeTutorial}
+            className="px-12 py-5 bg-white text-black font-ancient text-[10px] tracking-[0.4em] uppercase rounded-full hover:scale-105 transition-transform"
+          >
+            Commencer l'éveil
+          </button>
+        </div>
+      )}
 
     </div>
   );
