@@ -19,7 +19,8 @@ if (!fs.existsSync(USERS_FILE)) {
 
 const app = express();
 const PORT = 3000;
-const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
+// Priority: Environment Variable > Render URL > Localhost
+const APP_URL = process.env.APP_URL || (process.env.RENDER_EXTERNAL_URL ? process.env.RENDER_EXTERNAL_URL : `http://localhost:${PORT}`);
 
 const stripe = (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== "temp") 
   ? new Stripe(process.env.STRIPE_SECRET_KEY) 
