@@ -204,14 +204,15 @@ async function startServer() {
       app.use(vite.middlewares);
     } else {
       app.use(express.static(path.join(__dirname, "dist")));
-      app.get("*", (req, res) => {
+      // Catch-all for SPA in production
+      app.use((req, res) => {
         res.sendFile(path.join(__dirname, "dist", "index.html"));
       });
     }
   } catch (err) {
     console.error("Vite/Middleware setup error:", err);
     // Fallback if Vite fails
-    app.get("*", (req, res) => {
+    app.use((req, res) => {
       res.status(500).send("Server initialization error. Please check logs.");
     });
   }
