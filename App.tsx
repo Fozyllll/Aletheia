@@ -122,7 +122,7 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 const CACHE_SIZE = 10;
 const PREFETCH_THRESHOLD = 3;
-const FREE_DAILY_LIMIT = 20;
+const FREE_DAILY_LIMIT = 100;
 
 const App: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);

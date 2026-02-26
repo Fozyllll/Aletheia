@@ -131,7 +131,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
                 {t.login}
               </button>
               <p className="text-white/10 text-[8px] uppercase tracking-widest text-center px-10 leading-relaxed">
-                Connectez-vous pour sauvegarder vos favoris et générer des images personnalisées.
+                {t.loginDesc}
               </p>
             </div>
           ) : (
@@ -147,10 +147,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
               <div className="bg-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 flex flex-col items-center gap-6">
                 <div className="text-center">
                   <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-1">
-                    {user.isPremium ? 'Statut' : t.credits}
+                    {user.isPremium ? t.status : t.credits}
                   </p>
                   <p className="text-white text-4xl font-serif italic">
-                    {user.isPremium ? 'Premium' : user.credits}
+                    {user.isPremium ? t.premium : user.credits}
                   </p>
                 </div>
                 {!user.isPremium && (
@@ -158,7 +158,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ settings, onUpdate, isActiv
                     onClick={onBuyCredits}
                     className="w-full py-4 bg-white/10 text-white border border-white/10 font-ancient text-[9px] tracking-[0.3em] uppercase rounded-2xl hover:bg-white/20 transition-colors"
                   >
-                    Passer au Premium (2.99€/mois)
+                    {t.upgrade}
                   </button>
                 )}
               </div>

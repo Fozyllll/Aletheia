@@ -68,13 +68,17 @@ export const TRANSLATIONS: Record<Language, any> = {
     avatar: 'Vessel Identity',
     copied: 'Captured in mind',
     login: 'Connect with Google',
+    loginDesc: 'Sign in to save your favorites and generate custom images.',
     logout: 'Disconnect',
     credits: 'Credits',
     buyCredits: 'Buy Credits (50)',
     account: 'Account',
     noCredits: 'No credits remaining',
     search: 'Search truths...',
-    noResults: 'No truths found.'
+    noResults: 'No truths found.',
+    status: 'Status',
+    premium: 'Premium',
+    upgrade: 'Upgrade to Premium (2.99€/mo)'
   },
   French: {
     appName: 'Aletheia',
@@ -103,13 +107,17 @@ export const TRANSLATIONS: Record<Language, any> = {
     avatar: 'Identité du Vaisseau',
     copied: 'Capturé dans l\'esprit',
     login: 'Se connecter avec Google',
+    loginDesc: 'Connectez-vous pour sauvegarder vos favoris et générer des images personnalisées.',
     logout: 'Se déconnecter',
     credits: 'Crédits',
     buyCredits: 'Acheter des crédits (50)',
     account: 'Compte',
     noCredits: 'Plus de crédits',
     search: 'Chercher une vérité...',
-    noResults: 'Aucune vérité trouvée.'
+    noResults: 'Aucune vérité trouvée.',
+    status: 'Statut',
+    premium: 'Premium',
+    upgrade: 'Passer au Premium (2.99€/mois)'
   },
   // Added Spanish translations to complete the Record type
   Spanish: {
@@ -138,7 +146,19 @@ export const TRANSLATIONS: Record<Language, any> = {
     success: 'Ascensión',
     life: 'Existencia',
     avatar: 'Identidad del Recipiente',
-    copied: 'Capturado en la mente'
+    copied: 'Capturado en la mente',
+    login: 'Conectar con Google',
+    loginDesc: 'Inicia sesión para guardar tus favoritos y generar imágenes personalizadas.',
+    logout: 'Cerrar sesión',
+    credits: 'Créditos',
+    buyCredits: 'Comprar créditos',
+    account: 'Cuenta',
+    noCredits: 'No quedan créditos',
+    search: 'Buscar verdades...',
+    noResults: 'No se han encontrado verdades.',
+    status: 'Estado',
+    premium: 'Premium',
+    upgrade: 'Pasar a Premium (2.99€/mes)'
   },
   // Added German translations to complete the Record type
   German: {

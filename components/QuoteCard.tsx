@@ -30,14 +30,14 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language,
     fetchLikes();
   }, [quote.text]);
 
-  const handleLike = async () => {
+  const handleLike = async (showAnim: boolean = false) => {
     const wasLiked = quote.isLiked;
     onLike();
     
     // Optimistic update
     setLikesCount(prev => wasLiked ? Math.max(0, prev - 1) : prev + 1);
 
-    if (!wasLiked) {
+    if (showAnim && !wasLiked) {
       setShowHeartAnim(true);
       setTimeout(() => setShowHeartAnim(false), 800);
     }
@@ -60,7 +60,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onLike, onShare, language,
     const now = Date.now();
     const DOUBLE_TAP_DELAY = 300;
     if (now - lastTap.current < DOUBLE_TAP_DELAY) {
-      handleLike();
+      handleLike(true); // Show big heart on double tap
     }
     lastTap.current = now;
   };
